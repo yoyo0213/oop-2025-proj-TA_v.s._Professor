@@ -1,0 +1,48 @@
+# 🐍 Python 相關
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# 📦 虛擬環境
+venv/
+env/
+.venv/
+
+# 🧪 測試工具
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# 📂 建構/套件相關
+build/
+dist/
+pip-wheel-metadata/
+*.spec
+
+# 🛠️ VSCode 專案設定
+.vscode/
+
+# 📸 截圖或非程式資料
+*.webp
+screenshots/
+
+# 📄 Jupyter 或互動輸出
+.ipynb_checkpoints/
+
+# 🔐 個人金鑰/環境變數
+.env
+.env.*
+
+# ❓ 其他你可能會產生的
+.DS_Store
+Thumbs.db
+.idea/
+*.sqlite3
+
