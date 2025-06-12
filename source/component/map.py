@@ -205,7 +205,7 @@ LEVEL_MAP_DATA = (
 # 第0关：测试模式地图
 {
     c.BACKGROUND_TYPE:  2,
-    c.GAME_TITLE: "隐藏测试关卡",
+    c.GAME_TITLE: "Hidden Test Level",
     c.INIT_SUN_NAME:    5000,
     c.SHOVEL:           1,
     c.SPAWN_ZOMBIES:    c.SPAWN_ZOMBIES_LIST,
@@ -230,7 +230,7 @@ LEVEL_MAP_DATA = (
 # 第1关：单行草皮
 {
     c.BACKGROUND_TYPE: 7,
-    c.GAME_TITLE: "白天 1-1",
+    c.GAME_TITLE: "Day 1-1",
     c.INIT_SUN_NAME: 150,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -240,7 +240,7 @@ LEVEL_MAP_DATA = (
 # 第2关：三行草皮
 {
     c.BACKGROUND_TYPE: 8,
-    c.GAME_TITLE: "白天 1-2",
+    c.GAME_TITLE: "Day 1-2",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -250,7 +250,7 @@ LEVEL_MAP_DATA = (
 # 第3关
 {
     c.BACKGROUND_TYPE: 0,
-    c.GAME_TITLE: "白天 1-3",
+    c.GAME_TITLE: "Day 1-3",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -260,7 +260,7 @@ LEVEL_MAP_DATA = (
 # 第4关
 {
     c.BACKGROUND_TYPE: 0,
-    c.GAME_TITLE: "白天 1-4",
+    c.GAME_TITLE: "Day 1-4",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -270,7 +270,7 @@ LEVEL_MAP_DATA = (
 # 第5关 目前白天最后一关
 {
     c.BACKGROUND_TYPE: 0,
-    c.GAME_TITLE: "白天 1-5",
+    c.GAME_TITLE: "Day 1-5",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -281,7 +281,7 @@ LEVEL_MAP_DATA = (
 # 第6关 目前夜晚第一关
 {
     c.BACKGROUND_TYPE: 1,
-    c.GAME_TITLE: "黑夜 2-1",
+    c.GAME_TITLE: "Night 2-1",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -292,7 +292,7 @@ LEVEL_MAP_DATA = (
 # 第7关
 {
     c.BACKGROUND_TYPE: 1,
-    c.GAME_TITLE: "黑夜 2-2",
+    c.GAME_TITLE: "Night 2-2",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -304,7 +304,7 @@ LEVEL_MAP_DATA = (
 # 第8关 目前为夜晚最后一关
 {
     c.BACKGROUND_TYPE: 1,
-    c.GAME_TITLE: "黑夜 2-3",
+    c.GAME_TITLE: "Night 2-3",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -323,7 +323,7 @@ LEVEL_MAP_DATA = (
 # 第9关 目前为泳池模式第一关
 {
     c.BACKGROUND_TYPE: 2,
-    c.GAME_TITLE: "泳池 3-1",
+    c.GAME_TITLE: "Swimming pool 3-1",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -334,7 +334,7 @@ LEVEL_MAP_DATA = (
 # 第10关
 {
     c.BACKGROUND_TYPE: 2,
-    c.GAME_TITLE: "泳池 3-2",
+    c.GAME_TITLE: "Swimming pool 3-2",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -346,7 +346,7 @@ LEVEL_MAP_DATA = (
 # 第11关
 {
     c.BACKGROUND_TYPE: 2,
-    c.GAME_TITLE: "泳池 3-3",
+    c.GAME_TITLE: "Swimming pool 3-3",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -357,7 +357,7 @@ LEVEL_MAP_DATA = (
 # 第12关 目前为泳池最后一关
 {
     c.BACKGROUND_TYPE: 2,
-    c.GAME_TITLE: "泳池 3-4",
+    c.GAME_TITLE: " 3-4",
     c.INIT_SUN_NAME: 50,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -388,7 +388,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第0关 测试
 {
     c.BACKGROUND_TYPE: 3,
-    c.GAME_TITLE: "隐藏测试关卡",
+    c.GAME_TITLE: "Hidden Test Level",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_MOVE,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -406,7 +406,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第1关 坚果保龄球
 {
     c.BACKGROUND_TYPE: 6,
-    c.GAME_TITLE: "坚果保龄球",
+    c.GAME_TITLE: "NNNuts Bowlings",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_BOWLING,
     c.SHOVEL: 0,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -419,7 +419,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第2关 白天 大决战
 {
     c.BACKGROUND_TYPE: 0,
-    c.GAME_TITLE: "大决战（白天）",
+    c.GAME_TITLE: "HOLY WAR (Daylight)",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_MOVE,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -437,7 +437,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第3关 夜晚 大决战
 {
     c.BACKGROUND_TYPE: 1,
-    c.GAME_TITLE: "大决战（黑夜）",
+    c.GAME_TITLE: "HOLY WAR (Night)",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_MOVE,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -457,7 +457,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第4关 泳池 大决战
 {
     c.BACKGROUND_TYPE: 2,
-    c.GAME_TITLE: "大决战（泳池）",
+    c.GAME_TITLE: "HOLY WAR (Swimming pool)",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_MOVE,
     c.SHOVEL: 1,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
@@ -477,7 +477,7 @@ LITTLE_GAME_MAP_DATA = (
 # 第5关 坚果保龄球2
 {
     c.BACKGROUND_TYPE: 6,
-    c.GAME_TITLE: "坚果保龄球(II)",
+    c.GAME_TITLE: "NNNuts Bowlings 2",
     c.CHOOSEBAR_TYPE: c.CHOOSEBAR_BOWLING,
     c.SHOVEL: 0,
     c.SPAWN_ZOMBIES:c.SPAWN_ZOMBIES_AUTO,
