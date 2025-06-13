@@ -9,26 +9,26 @@ else:   # 非Windows系统存储路径
     USERDATA_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "userdata.json"))
     USERLOG_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "run.log"))
 
-# 游戏图片资源路径
+# images path
 PATH_IMG_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "graphics")
-# 游戏音乐文件夹路径
+# music path
 PATH_MUSIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources","music")
-# 窗口图标
+# logo path
 ORIGINAL_LOGO = os.path.join(os.path.dirname(os.path.dirname(__file__)), "pypvz-exec-logo.png")
-# 字体路径
+# font path
 FONT_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "DroidSansFallback.ttf")
 
-# 窗口标题
-ORIGINAL_CAPTION = "pypvz"
+# title
+ORIGINAL_CAPTION = "TA vs. Zombies"
 
-# 游戏模式
+# game mode
 GAME_MODE = "mode"
 MODE_ADVENTURE = "adventure"
 MODE_LITTLEGAME = "littleGame"
 MODE_SURVIVAL = "survival"
 MODE_LEADERBOARD = "leaderboard"
 
-# 窗口大小
+# size of screen
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -114,8 +114,9 @@ GAME_VICTORY = "game victory"
 LEVEL = "level"
 AWARD_SCREEN = "award screen"
 HELP_SCREEN = "help screen"
+SCOREBOARD = "scoreboard"
 
-# 界面图片文件名
+# names of images of each state
 MAIN_MENU_IMAGE = "MainMenu"
 OPTION_ADVENTURE = "Adventure"
 GAME_LOSE_IMAGE = "GameLose"
@@ -123,7 +124,7 @@ GAME_VICTORY_IMAGE = "GameVictory"
 AWARD_SCREEN_IMAGE = "AwardScreen"
 HELP_SCREEN_IMAGE = "HelpScreen"
 
-# 地图相关内容
+# about maps
 BACKGROUND_NAME = "Background"
 BACKGROUND_TYPE = "background_type"
 INIT_SUN_NAME = "init_sun_value"
