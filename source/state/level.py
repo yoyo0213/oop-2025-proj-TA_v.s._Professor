@@ -191,19 +191,22 @@ class Level(tool.State):
                       "mode=", self.game_info[c.GAME_MODE],
                       "flags=", self.map_data[c.NUM_FLAGS],
                       "old_wave=", self.wave_num)
-                self._logged_reset = True
+            self._logged_reset = False
+            self._logged_reset=False
             self.survival_rounds += 1
             self.createWaves(
             useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
             num_flags=self.map_data[c.NUM_FLAGS],
             survival_rounds=self.survival_rounds
-            )
-            self.wave_num        = 1
-            self.wave_time       = current_time
-            self.wave_zombies    = self.waves[0]           # 把新 waves 的第 1 筆給它
-            self.zombie_num      = len(self.wave_zombies)   # 同步僵屍總數
-            c.SOUND_ZOMBIE_COMING.play()                    # 播放僵屍來襲音效
-            self.level_progress_zombie_head_image_rect.x = self.level_progress_bar_image_rect.x + 75
+        )
+        # now immediately queue the first wave of the new round
+            self.wave_num     = 1
+            self.wave_time    = current_time
+            self.wave_zombies = self.waves[0]               # ← assign the new wave
+            self.zombie_num   = len(self.wave_zombies)      # ← update count
+            c.SOUND_ZOMBIE_COMING.play()                    # ← (optional) play sound
+            self.level_progress_zombie_head_image_rect.x = \
+                self.level_progress_bar_image_rect.x + 75
             return
     # ------------------------------------------------------------
     # 以下皆為原本波次刷新邏輯（僅微調縮排與註解）
@@ -638,13 +641,10 @@ class Level(tool.State):
         else:
             # 新僵尸生成方式
             self.refreshWaves(self.current_time)
-            if self.wave_zombies and self.wave_num > 0 and not self._logged_first_wave:
-                print("▶▶ [FIRST WAVE QUEUED]",
-                  "wave_num=", self.wave_num,
-                  "zombie_count=", len(self.wave_zombies))
-                self._logged_first_wave = True
-
             if self.wave_zombies and self.wave_num > 0:  # 仅在 wave_num > 0 时生成殭屍
+                print(f"[SPAWN WAVE] flag={(self.wave_num-1)//10+1} "
+              f"wave={self.wave_num} "
+              f"count={len(self.wave_zombies)}")
                 for i in self.wave_zombies:
                     self.createZombie(i)
                 self.wave_zombies = []  # 生成後清空，避免重複生成
