@@ -26,6 +26,7 @@ GAME_MODE = "mode"
 MODE_ADVENTURE = "adventure"
 MODE_LITTLEGAME = "littleGame"
 MODE_SURVIVAL = "survival"
+MODE_LEADERBOARD = "leaderboard"
 
 # 窗口大小
 SCREEN_WIDTH = 800

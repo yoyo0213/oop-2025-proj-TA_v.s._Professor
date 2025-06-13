@@ -170,34 +170,46 @@ class Level(tool.State):
 
     # 僵尸的刷新机制
     def refreshWaves(self, current_time, survival_rounds=0):
-        # 最后一波或者大于最后一波
-        # 如果在夜晚按需从墓碑生成僵尸 有泳池时从水中生成僵尸
-        # 否则直接return
-        if self.wave_num >= self.map_data[c.NUM_FLAGS]*10:
-    # 所有僵屍已生成完，但場上可能還有存活
+        """
+        刷新波次；支援無盡生存模式：
+        ─打完 NUM_FLAGS 面旗幟、場上殭屍清空 → 直接重開下一輪，
+        並以 self.survival_rounds 逐輪遞增難度。
+        """
+    # ------------------------------------------------------------
+    # 【無盡生存】打完最後一面旗幟後 → 進入下一輪
+    # ------------------------------------------------------------
+        if self.wave_num >= self.map_data[c.NUM_FLAGS] * 10:
             field_zombies = sum(len(g) for g in self.zombie_groups)
+            if self.game_info[c.GAME_MODE] == c.MODE_SURVIVAL and field_zombies > 0:
+                return
+            
             if field_zombies == 0:
                 if self.game_info[c.GAME_MODE] == c.MODE_SURVIVAL:
-            # ★ 進入下一輪
                     self.survival_rounds += 1
                     self.wave_num = 0
                     self.wave_time = current_time
-            # 重新生成更難的波次
-                    self.createWaves(
-                        useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
-                        num_flags=self.map_data[c.NUM_FLAGS],
+                    self.createWaves(useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
+                        num_flags      =self.map_data[c.NUM_FLAGS],
                         survival_rounds=self.survival_rounds)
-            # 重新計算進度條位置
                     self.level_progress_zombie_head_image_rect.x = \
                         self.level_progress_bar_image_rect.x + 75
-            else:
-                return          # 冒險 / 普通關卡照舊
-        # 还未开始出现僵尸
-        if (self.wave_num == 0):
-            if (self.wave_time == 0):    # 表明刚刚开始游戏
+            # ▼ 在這裡 **加上這一行** ▼
+                    return
+                else:
+                    return
+
+            
+
+    # ------------------------------------------------------------
+    # 以下皆為原本波次刷新邏輯（僅微調縮排與註解）
+    # ------------------------------------------------------------
+    # 尚未開始出現殭屍
+        if self.wave_num == 0:
+            if self.wave_time == 0:                    # 剛開始遊戲
                 self.wave_time = current_time
             else:
-                if (survival_rounds == 0) and (self.bar_type == c.CHOOSEBAR_STATIC): # 首次选卡等待时间较长
+                if survival_rounds == 0 and self.bar_type == c.CHOOSEBAR_STATIC:
+                # 首次選卡等待時間較長
                     if current_time - self.wave_time >= 18000:
                         self.wave_num += 1
                         self.wave_time = current_time
@@ -205,43 +217,53 @@ class Level(tool.State):
                         self.zombie_num = len(self.wave_zombies)
                         c.SOUND_ZOMBIE_COMING.play()
                 else:
-                    if (current_time - self.wave_time >= 6000):
+                    if current_time - self.wave_time >= 6000:
                         self.wave_num += 1
                         self.wave_time = current_time
                         self.wave_zombies = self.waves[self.wave_num - 1]
                         self.zombie_num = len(self.wave_zombies)
                         c.SOUND_ZOMBIE_COMING.play()
             return
-        if (self.wave_num % 10 != 9):
-            if ((current_time - self.wave_time >= 25000 + random.randint(0, 6000)) or (self.bar_type == c.CHOOSEBAR_BOWLING and current_time - self.wave_time >= 12500 + random.randint(0, 3000))):
+
+    # 一般波次與大波（9 → 10）判定
+        if self.wave_num % 10 != 9:
+            if ((current_time - self.wave_time >= 25000 + random.randint(0, 6000)) or
+                (self.bar_type == c.CHOOSEBAR_BOWLING and
+                current_time - self.wave_time >= 12500 + random.randint(0, 3000))):
                 self.wave_num += 1
                 self.wave_time = current_time
                 self.wave_zombies = self.waves[self.wave_num - 1]
                 self.zombie_num = len(self.wave_zombies)
                 c.SOUND_ZOMBIE_VOICE.play()
         else:
-            if ((current_time - self.wave_time >= 45000) or (self.bar_type != c.CHOOSEBAR_STATIC and current_time - self.wave_time >= 25000)):
+        # 第 10 波：一大波來襲
+            if ((current_time - self.wave_time >= 45000) or
+                (self.bar_type != c.CHOOSEBAR_STATIC and
+                current_time - self.wave_time >= 25000)):
                 self.wave_num += 1
                 self.wave_time = current_time
                 self.wave_zombies = self.waves[self.wave_num - 1]
                 self.zombie_num = len(self.wave_zombies)
-                # 一大波时播放音效
                 c.SOUND_HUGE_WAVE_APPROCHING.play()
                 return
-            elif ((current_time - self.wave_time >= 43000) or (self.bar_type != c.CHOOSEBAR_STATIC and current_time - self.wave_time >= 23000)):
+            elif ((current_time - self.wave_time >= 43000) or
+                (self.bar_type != c.CHOOSEBAR_STATIC and
+                current_time - self.wave_time >= 23000)):
                 self.show_hugewave_approching_time = current_time
 
-        zombie_nums = 0
-        for i in range(self.map_y_len):
-            zombie_nums += len(self.zombie_groups[i])
-        if self.zombie_num and (zombie_nums / self.zombie_num < random.uniform(0.15, 0.25)) and (current_time - self.wave_time > 4000):
-            # 当僵尸所剩无几并且时间过了4000 ms以上时，改变时间记录，使得2000 ms后刷新僵尸（所以需要判断剩余时间是否大于2000 ms）
+    # 動態提前刷新（場上殭屍所剩無幾時）
+        zombie_nums = sum(len(g) for g in self.zombie_groups)
+        if (self.zombie_num and
+            zombie_nums / self.zombie_num < random.uniform(0.15, 0.25) and
+            current_time - self.wave_time > 4000):
+        # 倒數 2 秒後刷新下一波
             if self.bar_type == c.CHOOSEBAR_STATIC:
-                if current_time - 43000 < self.wave_time:    # 判断剩余时间是否有2000 ms
-                    self.wave_time = current_time - 43000    # 即倒计时2000 ms
+                if current_time - 43000 < self.wave_time:
+                    self.wave_time = current_time - 43000
             else:
-                if current_time - 23000 < self.wave_time:    # 判断剩余时间是否有2000 ms
-                    self.wave_time = current_time - 23000    # 即倒计时2000 ms
+                if current_time - 23000 < self.wave_time:
+                    self.wave_time = current_time - 23000
+
 
 
     # 旧机制，目前仅用于调试
@@ -332,6 +354,7 @@ class Level(tool.State):
         pg.mixer.music.play(-1, 0)
         pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
 
+        self.survival_rounds = 0
         self.state = c.PLAY
         if self.bar_type == c.CHOOSEBAR_STATIC:
             self.menubar = menubar.MenuBar(card_list, self.map_data[c.INIT_SUN_NAME])
@@ -622,7 +645,7 @@ class Level(tool.State):
                     self.zombie_list.remove(data)
         else:
             # 新僵尸生成方式
-            self.refreshWaves(self.current_time)
+            self.refreshWaves(self.current_time, self.survival_rounds)
             for i in self.wave_zombies:
                 self.createZombie(i)
             else:
@@ -1351,6 +1374,8 @@ class Level(tool.State):
                     self.killPlant(plant)
 
     def checkVictory(self):
+        if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
+            return False
         if self.map_data[c.SPAWN_ZOMBIES] == c.SPAWN_ZOMBIES_LIST:
             if len(self.zombie_list) > 0:
                 return False
@@ -1369,6 +1394,8 @@ class Level(tool.State):
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:
                 if zombie.rect.right < -20 and (not zombie.losthead) and (zombie.state != c.DIE):
+                    self.next = c.MODE_LEADERBOARD   # 你的排行榜狀態常數
+                    self.done = True
                     return True
         return False
 
