@@ -173,78 +173,25 @@ class Level(tool.State):
         # 最后一波或者大于最后一波
         # 如果在夜晚按需从墓碑生成僵尸 有泳池时从水中生成僵尸
         # 否则直接return
-        if self.wave_num >= self.map_data[c.NUM_FLAGS] * 10:
-            if self.map_data[c.BACKGROUND_TYPE] == c.BACKGROUND_NIGHT:
-                # 生长墓碑
-                if not self.new_grave_added:
-                    if current_time - self.wave_time > 100:
-                        # 墓碑最多有12个
-                        if len(self.grave_set) < 12:
-                            unoccupied = []
-                            occupied = []
-                            # 毁灭菇坑与冰道应当特殊化
-                            exception_objects = {c.HOLE, c.ICEFROZENPLOT}
-                            # 遍历能生成墓碑的区域
-                            for map_y in range(0, 4):
-                                for map_x in range(4, 8):
-                                    # 为空、为毁灭菇坑、为冰道时看作未被植物占据
-                                    if ((not self.map.map[map_y][map_x][c.MAP_PLANT]) or
-                                        (all((i in exception_objects) for i in self.map.map[map_y][map_x][c.MAP_PLANT]))):
-                                        unoccupied.append((map_x, map_y))
-                                    # 已有墓碑的格子不应该放到任何列表中
-                                    elif c.GRAVE not in self.map.map[map_y][map_x][c.MAP_PLANT]:
-                                        occupied.append((map_x, map_y))
-                            if unoccupied:
-                                target = unoccupied[random.randint(0, len(unoccupied) - 1)]
-                                map_x, map_y = target
-                                posX, posY = self.map.getMapGridPos(map_x, map_y)
-                                self.plant_groups[map_y].add(plant.Grave(posX, posY))
-                                self.map.map[map_y][map_x][c.MAP_PLANT].add(c.GRAVE)
-                                self.grave_set.add((map_x, map_y))
-                            elif occupied:
-                                target = occupied[random.randint(0, len(occupied) - 1)]
-                                map_x, map_y = target
-                                posX, posY = self.map.getMapGridPos(map_x, map_y)
-                                for i in self.plant_groups[map_y]:
-                                    checkMapX, _ = self.map.getMapIndex(i.rect.centerx, i.rect.bottom)
-                                    if map_x == checkMapX:
-                                        # 不杀死毁灭菇坑和冰道
-                                        if i.name not in exception_objects:
-                                            i.health = 0
-                                self.plant_groups[map_y].add(plant.Grave(posX, posY))
-                                self.map.map[map_y][map_x][c.MAP_PLANT].add(c.GRAVE)
-                                self.grave_set.add((map_x, map_y))
-                            self.new_grave_added = True
-                # 从墓碑中生成僵尸
-                if not self.grave_zombie_created:
-                    if current_time - self.wave_time > 1500:
-                        for item in self.grave_set:
-                            item_x, item_y = self.map.getMapGridPos(*item)
-                            # 目前设定：1/2概率普通僵尸，1/2概率路障僵尸
-                            if random.randint(0, 1):
-                                self.zombie_groups[item[1]].add(zombie.NormalZombie(item_x, item_y, self.head_group))
-                            else:
-                                self.zombie_groups[item[1]].add(zombie.ConeHeadZombie(item_x, item_y, self.head_group))
-                        self.grave_zombie_created = True
-            elif self.map_data[c.BACKGROUND_TYPE] in c.POOL_EQUIPPED_BACKGROUNDS:
-                if not self.created_zombie_from_pool:
-                    if current_time - self.wave_time > 1500:
-                        for i in range(3):
-                            # 水中倒数四列内可以在此时产生僵尸。共产生3个
-                            map_x, map_y = random.randint(5, 8), random.randint(2, 3)
-                            item_x, item_y = self.map.getMapGridPos(map_x, map_y)
-                            # 用随机数指定产生的僵尸类型
-                            # 暂时设定为生成概率相同
-                            zombie_type = random.randint(1, 3)
-                            if zombie_type == 1:
-                                self.zombie_groups[map_y].add(zombie.BucketHeadDuckyTubeZombie(item_x, item_y, self.head_group))
-                            elif zombie_type == 2:
-                                self.zombie_groups[map_y].add(zombie.ConeHeadDuckyTubeZombie(item_x, item_y, self.head_group))
-                            else:
-                                self.zombie_groups[map_y].add(zombie.DuckyTubeZombie(item_x, item_y, self.head_group))
-                        self.created_zombie_from_pool = True
-            return
-
+        if self.wave_num >= self.map_data[c.NUM_FLAGS]*10:
+    # 所有僵屍已生成完，但場上可能還有存活
+            field_zombies = sum(len(g) for g in self.zombie_groups)
+            if field_zombies == 0:
+                if self.game_info[c.GAME_MODE] == c.MODE_SURVIVAL:
+            # ★ 進入下一輪
+                    self.survival_rounds += 1
+                    self.wave_num = 0
+                    self.wave_time = current_time
+            # 重新生成更難的波次
+                    self.createWaves(
+                        useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
+                        num_flags=self.map_data[c.NUM_FLAGS],
+                        survival_rounds=self.survival_rounds)
+            # 重新計算進度條位置
+                    self.level_progress_zombie_head_image_rect.x = \
+                        self.level_progress_bar_image_rect.x + 75
+            else:
+                return          # 冒險 / 普通關卡照舊
         # 还未开始出现僵尸
         if (self.wave_num == 0):
             if (self.wave_time == 0):    # 表明刚刚开始游戏
@@ -427,9 +374,10 @@ class Level(tool.State):
                                     survival_rounds=0,
                                     inevitable_zombie_dict=self.map_data[c.INEVITABLE_ZOMBIE_DICT])
             else:
+                self.survival_rounds = 0
                 self.createWaves(   useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
                                     num_flags=self.map_data[c.NUM_FLAGS],
-                                    survival_rounds=0)
+                                    survival_rounds=self.survival_rounds)
         self.setupCars()
 
         # 地图有铲子才添加铲子

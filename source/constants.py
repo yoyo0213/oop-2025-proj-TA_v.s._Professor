@@ -25,6 +25,7 @@ ORIGINAL_CAPTION = "pypvz"
 GAME_MODE = "mode"
 MODE_ADVENTURE = "adventure"
 MODE_LITTLEGAME = "littleGame"
+MODE_SURVIVAL = "survival"
 
 # 窗口大小
 SCREEN_WIDTH = 800
