@@ -12,7 +12,8 @@ pg.init()
 
 #include 
 from source import constants as c
-from source.state import level ,screen, mainmenu ,tool
+from source.state import level ,screen, mainmenu 
+import source.tool as tool
 
 def main():
     # start
