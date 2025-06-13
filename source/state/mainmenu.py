@@ -99,7 +99,7 @@ class Menu(tool.State):
             self.option_button_highlight_time = self.current_time
         elif self.inArea(self.help_rect, x, y):
             self.help_hilight_time = self.current_time
-            
+
         self.adventure_image = self.chooseHilightImage(self.adventure_highlight_time, self.adventure_frames)
         self.exit_image = self.chooseHilightImage(self.exit_highlight_time, self.exit_frames)
         self.option_button_image = self.chooseHilightImage(self.option_button_highlight_time, self.option_button_frames)
@@ -124,7 +124,7 @@ class Menu(tool.State):
 
     # 按到小游戏
     def respondLittleGameClick(self):
-        self.done = True
+        self.done = False
 
 
     # 点击到退出按钮，修改转态的done属性
