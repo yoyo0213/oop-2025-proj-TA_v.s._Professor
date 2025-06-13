@@ -226,7 +226,8 @@ class Level(tool.State):
             return
 
         if self.wave_num % 10 != 9:
-            delay = 25000 + random.randint(0, 6000)
+            #delay = 25000 + random.randint(0, 6000)
+            delay=100
             if self.bar_type == c.CHOOSEBAR_BOWLING:
                 delay = 12500 + random.randint(0, 3000)
             if current_time - self.wave_time >= delay:
@@ -237,7 +238,8 @@ class Level(tool.State):
                     self.zombie_num = len(self.wave_zombies)
                     c.SOUND_ZOMBIE_VOICE.play()
         else:
-            delay = 45000
+            #delay = 45000
+            delay=200
             if self.bar_type != c.CHOOSEBAR_STATIC:
                 delay = 25000
             if current_time - self.wave_time >= delay:
