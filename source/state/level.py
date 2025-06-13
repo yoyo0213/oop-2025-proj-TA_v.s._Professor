@@ -10,6 +10,8 @@ logger = logging.getLogger("main")
 class Level(tool.State):
     def __init__(self):
         tool.State.__init__(self)
+        self._logged_reset= False
+        self._logged_first_wave = False
 
     def startup(self, current_time, persist):
         self.game_info = persist
@@ -175,6 +177,8 @@ class Level(tool.State):
         ─打完 NUM_FLAGS 面旗幟、場上殭屍清空 → 直接重開下一輪，
         並以 self.survival_rounds 逐輪遞增難度。
         """
+        # refreshWaves() 一開頭，生存模式重置 if 之前
+
     # ------------------------------------------------------------
     # 【無盡生存】打完最後一面旗幟後 → 進入下一輪
     # ------------------------------------------------------------
@@ -182,14 +186,23 @@ class Level(tool.State):
             self.wave_num >= self.map_data[c.NUM_FLAGS] * 10):
             if any(len(g) for g in self.zombie_groups):
                 return
+            if not self._logged_reset:
+                print("▶▶ [RESET TRIGGERED]",
+                      "mode=", self.game_info[c.GAME_MODE],
+                      "flags=", self.map_data[c.NUM_FLAGS],
+                      "old_wave=", self.wave_num)
+                self._logged_reset = True
             self.survival_rounds += 1
-            self.wave_num = 0
-            self.wave_time = current_time
             self.createWaves(
             useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
             num_flags=self.map_data[c.NUM_FLAGS],
             survival_rounds=self.survival_rounds
             )
+            self.wave_num        = 1
+            self.wave_time       = current_time
+            self.wave_zombies    = self.waves[0]           # 把新 waves 的第 1 筆給它
+            self.zombie_num      = len(self.wave_zombies)   # 同步僵屍總數
+            c.SOUND_ZOMBIE_COMING.play()                    # 播放僵屍來襲音效
             self.level_progress_zombie_head_image_rect.x = self.level_progress_bar_image_rect.x + 75
             return
     # ------------------------------------------------------------
@@ -618,26 +631,29 @@ class Level(tool.State):
             if self.zombie_start_time == 0:
                 self.zombie_start_time = self.current_time
             elif len(self.zombie_list) > 0:
-                data = self.zombie_list[0]  # 因此要求僵尸列表按照时间顺序排列
-                # data内容排列：[0]:时间 [1]:名称 [2]:坐标
-                if  data[0] <= (self.current_time - self.zombie_start_time):
+                data = self.zombie_list[0]
+                if data[0] <= (self.current_time - self.zombie_start_time):
                     self.createZombie(data[1], data[2])
                     self.zombie_list.remove(data)
         else:
             # 新僵尸生成方式
             self.refreshWaves(self.current_time)
-            for i in self.wave_zombies:
-                self.createZombie(i)
-            else:
-                self.wave_zombies = []
+            if self.wave_zombies and self.wave_num > 0 and not self._logged_first_wave:
+                print("▶▶ [FIRST WAVE QUEUED]",
+                  "wave_num=", self.wave_num,
+                  "zombie_count=", len(self.wave_zombies))
+                self._logged_first_wave = True
 
+            if self.wave_zombies and self.wave_num > 0:  # 仅在 wave_num > 0 时生成殭屍
+                for i in self.wave_zombies:
+                    self.createZombie(i)
+                self.wave_zombies = []  # 生成後清空，避免重複生成
 
         for i in range(self.map_y_len):
             self.bullet_groups[i].update(self.game_info)
             self.plant_groups[i].update(self.game_info)
             self.zombie_groups[i].update(self.game_info)
             self.hypno_zombie_groups[i].update(self.game_info)
-            # 清除走出去的魅惑僵尸
             for zombie in self.hypno_zombie_groups[i]:
                 if zombie.rect.x > c.SCREEN_WIDTH:
                     zombie.kill()
@@ -646,7 +662,6 @@ class Level(tool.State):
         self.sun_group.update(self.game_info)
         
         if self.produce_sun:
-            # 原版阳光掉落机制：(已掉落阳光数*100 ms + 4250 ms) 与 9500 ms的最小值，再加 0 ~ 2750 ms 之间的一个数
             if (self.current_time - self.sun_timer) > min(c.PRODUCE_SUN_INTERVAL + 100*self.fallen_sun, 9500) + random.randint(0, 2750):
                 self.sun_timer = self.current_time
                 map_x, map_y = self.map.getRandomMapIndex()
@@ -654,7 +669,6 @@ class Level(tool.State):
                 self.sun_group.add(plant.Sun(x, 0, x, y))
                 self.fallen_sun += 1
 
-        # 检查有没有捡到阳光
         clicked_sun = False
         clicked_cards_or_map = False
         if not self.drag_plant and not self.drag_shovel and mouse_pos and mouse_click[0]:
@@ -662,7 +676,6 @@ class Level(tool.State):
                 if sun.checkCollision(*mouse_pos):
                     self.menubar.increaseSunValue(sun.sun_value)
                     clicked_sun = True
-                    # 播放收集阳光的音效
                     c.SOUND_COLLECT_SUN.play()
 
         # 拖动植物或者铲子
@@ -672,7 +685,6 @@ class Level(tool.State):
                 self.setupMouseImage(self.click_result[0], self.click_result[1])
                 self.click_result[1].clicked = True
                 clicked_cards_or_map = True
-                # 播放音效
                 c.SOUND_CLICK_CARD.play()
         elif self.drag_plant:
             if mouse_click[1]:
@@ -694,19 +706,15 @@ class Level(tool.State):
         # 检查是否点击菜单
         if mouse_click[0] and (not clicked_sun) and (not clicked_cards_or_map):
             if self.inArea(self.little_menu_rect, *mouse_pos):
-                # 暂停 显示菜单
                 self.show_game_menu = True
-                # 播放点击音效
                 c.SOUND_BUTTON_CLICK.play()
             elif self.has_shovel:
                 if self.inArea(self.shovel_box_rect, *mouse_pos):
                     self.drag_shovel = not self.drag_shovel
                     if not self.drag_shovel:
                         self.removeMouseImagePlus()
-                    # 播放点击铲子的音效
                     c.SOUND_SHOVEL.play()
                 elif self.drag_shovel:
-                    # 移出这地方的植物
                     self.shovelRemovePlant(mouse_pos)
 
         for car in self.cars:
@@ -714,7 +722,6 @@ class Level(tool.State):
                 car.update(self.game_info)
 
         self.menubar.update(self.current_time)
-
 
         # 检查碰撞
         self.checkBulletCollisions()
