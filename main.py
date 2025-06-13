@@ -1,23 +1,19 @@
 #!/usr/bin/env python
-"""精簡版 main.py
-啟動後直接進入《NNNuts Bowling》小遊戲
-保留完整殭屍與植物定義，僅簡化狀態切換邏輯
-"""
+
 import logging
 import traceback
 import os
 import pygame as pg
 from logging.handlers import RotatingFileHandler
 
-# 初始化 pygame
+# initialize pygame
 os.environ["SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR"] = "0"
 pg.init()
 
-from source import tool
+#include 
 from source import constants as c
-from source.state import level  # 這裡僅需 Level 狀態
-from source.state import mainmenu
-from source.state import screen
+from source.state import level ,screen, mainmenu ,tool
+
 def main():
     # start
     game = tool.Control()
