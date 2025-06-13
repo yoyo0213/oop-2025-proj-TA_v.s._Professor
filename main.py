@@ -16,7 +16,7 @@ pg.init()
 from source import tool
 from source import constants as c
 from source.state import level  # 這裡僅需 Level 狀態
-
+from source.state import mainmenu
 def main():
     """程式進入點"""
     # === 狀態機啟動 ===
@@ -27,8 +27,11 @@ def main():
     game.game_info[c.LITTLEGAME_NUM] = 1
 
     # 僅註冊 Level 狀態即可
-    state_dict = {c.LEVEL: level.Level()}
-    game.setup_states(state_dict, c.LEVEL)
+    state_dict = {
+                c.MAIN_MENU: mainmenu.Menu(),
+                c.LEVEL: level.Level()
+                  }
+    game.setup_states(state_dict, c.MAIN_MENU)
     game.run()
 
 
