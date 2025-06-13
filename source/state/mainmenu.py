@@ -131,7 +131,7 @@ class Menu(tool.State):
     # 按到小游戏
     def respondLittleGameClick(self):
         self.done = True
-        self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
+        self.persist[c.GAME_MODE] = c.MODE_SURVIVAL
         # 播放点击音效
         c.SOUND_BUTTON_CLICK.play()
 

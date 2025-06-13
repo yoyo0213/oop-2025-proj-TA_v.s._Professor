@@ -10,6 +10,8 @@ logger = logging.getLogger("main")
 class Level(tool.State):
     def __init__(self):
         tool.State.__init__(self)
+        self._logged_reset= False
+        self._logged_first_wave = False
 
     def startup(self, current_time, persist):
         self.game_info = persist
@@ -170,131 +172,96 @@ class Level(tool.State):
 
     # 僵尸的刷新机制
     def refreshWaves(self, current_time, survival_rounds=0):
-        # 最后一波或者大于最后一波
-        # 如果在夜晚按需从墓碑生成僵尸 有泳池时从水中生成僵尸
-        # 否则直接return
-        if self.wave_num >= self.map_data[c.NUM_FLAGS] * 10:
-            if self.map_data[c.BACKGROUND_TYPE] == c.BACKGROUND_NIGHT:
-                # 生长墓碑
-                if not self.new_grave_added:
-                    if current_time - self.wave_time > 100:
-                        # 墓碑最多有12个
-                        if len(self.grave_set) < 12:
-                            unoccupied = []
-                            occupied = []
-                            # 毁灭菇坑与冰道应当特殊化
-                            exception_objects = {c.HOLE, c.ICEFROZENPLOT}
-                            # 遍历能生成墓碑的区域
-                            for map_y in range(0, 4):
-                                for map_x in range(4, 8):
-                                    # 为空、为毁灭菇坑、为冰道时看作未被植物占据
-                                    if ((not self.map.map[map_y][map_x][c.MAP_PLANT]) or
-                                        (all((i in exception_objects) for i in self.map.map[map_y][map_x][c.MAP_PLANT]))):
-                                        unoccupied.append((map_x, map_y))
-                                    # 已有墓碑的格子不应该放到任何列表中
-                                    elif c.GRAVE not in self.map.map[map_y][map_x][c.MAP_PLANT]:
-                                        occupied.append((map_x, map_y))
-                            if unoccupied:
-                                target = unoccupied[random.randint(0, len(unoccupied) - 1)]
-                                map_x, map_y = target
-                                posX, posY = self.map.getMapGridPos(map_x, map_y)
-                                self.plant_groups[map_y].add(plant.Grave(posX, posY))
-                                self.map.map[map_y][map_x][c.MAP_PLANT].add(c.GRAVE)
-                                self.grave_set.add((map_x, map_y))
-                            elif occupied:
-                                target = occupied[random.randint(0, len(occupied) - 1)]
-                                map_x, map_y = target
-                                posX, posY = self.map.getMapGridPos(map_x, map_y)
-                                for i in self.plant_groups[map_y]:
-                                    checkMapX, _ = self.map.getMapIndex(i.rect.centerx, i.rect.bottom)
-                                    if map_x == checkMapX:
-                                        # 不杀死毁灭菇坑和冰道
-                                        if i.name not in exception_objects:
-                                            i.health = 0
-                                self.plant_groups[map_y].add(plant.Grave(posX, posY))
-                                self.map.map[map_y][map_x][c.MAP_PLANT].add(c.GRAVE)
-                                self.grave_set.add((map_x, map_y))
-                            self.new_grave_added = True
-                # 从墓碑中生成僵尸
-                if not self.grave_zombie_created:
-                    if current_time - self.wave_time > 1500:
-                        for item in self.grave_set:
-                            item_x, item_y = self.map.getMapGridPos(*item)
-                            # 目前设定：1/2概率普通僵尸，1/2概率路障僵尸
-                            if random.randint(0, 1):
-                                self.zombie_groups[item[1]].add(zombie.NormalZombie(item_x, item_y, self.head_group))
-                            else:
-                                self.zombie_groups[item[1]].add(zombie.ConeHeadZombie(item_x, item_y, self.head_group))
-                        self.grave_zombie_created = True
-            elif self.map_data[c.BACKGROUND_TYPE] in c.POOL_EQUIPPED_BACKGROUNDS:
-                if not self.created_zombie_from_pool:
-                    if current_time - self.wave_time > 1500:
-                        for i in range(3):
-                            # 水中倒数四列内可以在此时产生僵尸。共产生3个
-                            map_x, map_y = random.randint(5, 8), random.randint(2, 3)
-                            item_x, item_y = self.map.getMapGridPos(map_x, map_y)
-                            # 用随机数指定产生的僵尸类型
-                            # 暂时设定为生成概率相同
-                            zombie_type = random.randint(1, 3)
-                            if zombie_type == 1:
-                                self.zombie_groups[map_y].add(zombie.BucketHeadDuckyTubeZombie(item_x, item_y, self.head_group))
-                            elif zombie_type == 2:
-                                self.zombie_groups[map_y].add(zombie.ConeHeadDuckyTubeZombie(item_x, item_y, self.head_group))
-                            else:
-                                self.zombie_groups[map_y].add(zombie.DuckyTubeZombie(item_x, item_y, self.head_group))
-                        self.created_zombie_from_pool = True
-            return
+        """
+        刷新波次；支援無盡生存模式：
+        ─打完 NUM_FLAGS 面旗幟、場上殭屍清空 → 直接重開下一輪，
+        並以 self.survival_rounds 逐輪遞增難度。
+        """
+        # refreshWaves() 一開頭，生存模式重置 if 之前
 
-        # 还未开始出现僵尸
-        if (self.wave_num == 0):
-            if (self.wave_time == 0):    # 表明刚刚开始游戏
+    # ------------------------------------------------------------
+    # 【無盡生存】打完最後一面旗幟後 → 進入下一輪
+    # ------------------------------------------------------------
+        if (self.game_info[c.GAME_MODE] == c.MODE_SURVIVAL and
+            self.wave_num >= self.map_data[c.NUM_FLAGS] * 10):
+            if any(len(g) for g in self.zombie_groups):
+                return
+            if not self._logged_reset:
+                print("▶▶ [RESET TRIGGERED]",
+                      "mode=", self.game_info[c.GAME_MODE],
+                      "flags=", self.map_data[c.NUM_FLAGS],
+                      "old_wave=", self.wave_num)
+            self._logged_reset = False
+            self._logged_reset=False
+            self.survival_rounds += 1
+            self.createWaves(
+            useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
+            num_flags=self.map_data[c.NUM_FLAGS],
+            survival_rounds=self.survival_rounds
+        )
+        # now immediately queue the first wave of the new round
+            self.wave_num     = 1
+            self.wave_time    = current_time
+            self.wave_zombies = self.waves[0]               # ← assign the new wave
+            self.zombie_num   = len(self.wave_zombies)      # ← update count
+            c.SOUND_ZOMBIE_COMING.play()                    # ← (optional) play sound
+            self.level_progress_zombie_head_image_rect.x = \
+                self.level_progress_bar_image_rect.x + 75
+            return
+    # ------------------------------------------------------------
+    # 以下皆為原本波次刷新邏輯（僅微調縮排與註解）
+    # ------------------------------------------------------------
+        if self.wave_num == 0:
+            if self.wave_time == 0:
                 self.wave_time = current_time
             else:
-                if (survival_rounds == 0) and (self.bar_type == c.CHOOSEBAR_STATIC): # 首次选卡等待时间较长
-                    if current_time - self.wave_time >= 18000:
-                        self.wave_num += 1
-                        self.wave_time = current_time
-                        self.wave_zombies = self.waves[self.wave_num - 1]
-                        self.zombie_num = len(self.wave_zombies)
-                        c.SOUND_ZOMBIE_COMING.play()
-                else:
-                    if (current_time - self.wave_time >= 6000):
-                        self.wave_num += 1
-                        self.wave_time = current_time
+                delay = 18000 if survival_rounds == 0 and self.bar_type == c.CHOOSEBAR_STATIC else 6000
+                if current_time - self.wave_time >= delay:
+                    self.wave_num += 1
+                    self.wave_time = current_time
+                    if 0 <= self.wave_num - 1 < len(self.waves):
                         self.wave_zombies = self.waves[self.wave_num - 1]
                         self.zombie_num = len(self.wave_zombies)
                         c.SOUND_ZOMBIE_COMING.play()
             return
-        if (self.wave_num % 10 != 9):
-            if ((current_time - self.wave_time >= 25000 + random.randint(0, 6000)) or (self.bar_type == c.CHOOSEBAR_BOWLING and current_time - self.wave_time >= 12500 + random.randint(0, 3000))):
+
+        if self.wave_num % 10 != 9:
+            #delay = 25000 + random.randint(0, 6000)
+            delay=100
+            if self.bar_type == c.CHOOSEBAR_BOWLING:
+                delay = 12500 + random.randint(0, 3000)
+            if current_time - self.wave_time >= delay:
                 self.wave_num += 1
                 self.wave_time = current_time
-                self.wave_zombies = self.waves[self.wave_num - 1]
-                self.zombie_num = len(self.wave_zombies)
-                c.SOUND_ZOMBIE_VOICE.play()
+                if 0 <= self.wave_num - 1 < len(self.waves):
+                    self.wave_zombies = self.waves[self.wave_num - 1]
+                    self.zombie_num = len(self.wave_zombies)
+                    c.SOUND_ZOMBIE_VOICE.play()
         else:
-            if ((current_time - self.wave_time >= 45000) or (self.bar_type != c.CHOOSEBAR_STATIC and current_time - self.wave_time >= 25000)):
+            #delay = 45000
+            delay=200
+            if self.bar_type != c.CHOOSEBAR_STATIC:
+                delay = 25000
+            if current_time - self.wave_time >= delay:
                 self.wave_num += 1
                 self.wave_time = current_time
-                self.wave_zombies = self.waves[self.wave_num - 1]
-                self.zombie_num = len(self.wave_zombies)
-                # 一大波时播放音效
-                c.SOUND_HUGE_WAVE_APPROCHING.play()
-                return
-            elif ((current_time - self.wave_time >= 43000) or (self.bar_type != c.CHOOSEBAR_STATIC and current_time - self.wave_time >= 23000)):
+                if 0 <= self.wave_num - 1 < len(self.waves):
+                    self.wave_zombies = self.waves[self.wave_num - 1]
+                    self.zombie_num = len(self.wave_zombies)
+                    c.SOUND_HUGE_WAVE_APPROCHING.play()
+            elif current_time - self.wave_time >= (delay - 2000):
                 self.show_hugewave_approching_time = current_time
 
-        zombie_nums = 0
-        for i in range(self.map_y_len):
-            zombie_nums += len(self.zombie_groups[i])
-        if self.zombie_num and (zombie_nums / self.zombie_num < random.uniform(0.15, 0.25)) and (current_time - self.wave_time > 4000):
-            # 当僵尸所剩无几并且时间过了4000 ms以上时，改变时间记录，使得2000 ms后刷新僵尸（所以需要判断剩余时间是否大于2000 ms）
+        zombie_nums = sum(len(g) for g in self.zombie_groups)
+        if (self.zombie_num and zombie_nums / self.zombie_num < random.uniform(0.15, 0.25) and
+            current_time - self.wave_time > 4000):
             if self.bar_type == c.CHOOSEBAR_STATIC:
-                if current_time - 43000 < self.wave_time:    # 判断剩余时间是否有2000 ms
-                    self.wave_time = current_time - 43000    # 即倒计时2000 ms
+                if current_time - 43000 < self.wave_time:
+                    self.wave_time = current_time - 43000
             else:
-                if current_time - 23000 < self.wave_time:    # 判断剩余时间是否有2000 ms
-                    self.wave_time = current_time - 23000    # 即倒计时2000 ms
+                if current_time - 23000 < self.wave_time:
+                    self.wave_time = current_time - 23000
+
 
 
     # 旧机制，目前仅用于调试
@@ -385,6 +352,7 @@ class Level(tool.State):
         pg.mixer.music.play(-1, 0)
         pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
 
+        self.survival_rounds = 0
         self.state = c.PLAY
         if self.bar_type == c.CHOOSEBAR_STATIC:
             self.menubar = menubar.MenuBar(card_list, self.map_data[c.INIT_SUN_NAME])
@@ -427,9 +395,10 @@ class Level(tool.State):
                                     survival_rounds=0,
                                     inevitable_zombie_dict=self.map_data[c.INEVITABLE_ZOMBIE_DICT])
             else:
+                self.survival_rounds = 0
                 self.createWaves(   useable_zombies=self.map_data[c.INCLUDED_ZOMBIES],
                                     num_flags=self.map_data[c.NUM_FLAGS],
-                                    survival_rounds=0)
+                                    survival_rounds=self.survival_rounds)
         self.setupCars()
 
         # 地图有铲子才添加铲子
@@ -667,26 +636,26 @@ class Level(tool.State):
             if self.zombie_start_time == 0:
                 self.zombie_start_time = self.current_time
             elif len(self.zombie_list) > 0:
-                data = self.zombie_list[0]  # 因此要求僵尸列表按照时间顺序排列
-                # data内容排列：[0]:时间 [1]:名称 [2]:坐标
-                if  data[0] <= (self.current_time - self.zombie_start_time):
+                data = self.zombie_list[0]
+                if data[0] <= (self.current_time - self.zombie_start_time):
                     self.createZombie(data[1], data[2])
                     self.zombie_list.remove(data)
         else:
             # 新僵尸生成方式
             self.refreshWaves(self.current_time)
-            for i in self.wave_zombies:
-                self.createZombie(i)
-            else:
-                self.wave_zombies = []
-
+            if self.wave_zombies and self.wave_num > 0:  # 仅在 wave_num > 0 时生成殭屍
+                print(f"[SPAWN WAVE] flag={(self.wave_num-1)//10+1} "
+              f"wave={self.wave_num} "
+              f"count={len(self.wave_zombies)}")
+                for i in self.wave_zombies:
+                    self.createZombie(i)
+                self.wave_zombies = []  # 生成後清空，避免重複生成
 
         for i in range(self.map_y_len):
             self.bullet_groups[i].update(self.game_info)
             self.plant_groups[i].update(self.game_info)
             self.zombie_groups[i].update(self.game_info)
             self.hypno_zombie_groups[i].update(self.game_info)
-            # 清除走出去的魅惑僵尸
             for zombie in self.hypno_zombie_groups[i]:
                 if zombie.rect.x > c.SCREEN_WIDTH:
                     zombie.kill()
@@ -695,7 +664,6 @@ class Level(tool.State):
         self.sun_group.update(self.game_info)
         
         if self.produce_sun:
-            # 原版阳光掉落机制：(已掉落阳光数*100 ms + 4250 ms) 与 9500 ms的最小值，再加 0 ~ 2750 ms 之间的一个数
             if (self.current_time - self.sun_timer) > min(c.PRODUCE_SUN_INTERVAL + 100*self.fallen_sun, 9500) + random.randint(0, 2750):
                 self.sun_timer = self.current_time
                 map_x, map_y = self.map.getRandomMapIndex()
@@ -703,7 +671,6 @@ class Level(tool.State):
                 self.sun_group.add(plant.Sun(x, 0, x, y))
                 self.fallen_sun += 1
 
-        # 检查有没有捡到阳光
         clicked_sun = False
         clicked_cards_or_map = False
         if not self.drag_plant and not self.drag_shovel and mouse_pos and mouse_click[0]:
@@ -711,7 +678,6 @@ class Level(tool.State):
                 if sun.checkCollision(*mouse_pos):
                     self.menubar.increaseSunValue(sun.sun_value)
                     clicked_sun = True
-                    # 播放收集阳光的音效
                     c.SOUND_COLLECT_SUN.play()
 
         # 拖动植物或者铲子
@@ -721,7 +687,6 @@ class Level(tool.State):
                 self.setupMouseImage(self.click_result[0], self.click_result[1])
                 self.click_result[1].clicked = True
                 clicked_cards_or_map = True
-                # 播放音效
                 c.SOUND_CLICK_CARD.play()
         elif self.drag_plant:
             if mouse_click[1]:
@@ -743,19 +708,15 @@ class Level(tool.State):
         # 检查是否点击菜单
         if mouse_click[0] and (not clicked_sun) and (not clicked_cards_or_map):
             if self.inArea(self.little_menu_rect, *mouse_pos):
-                # 暂停 显示菜单
                 self.show_game_menu = True
-                # 播放点击音效
                 c.SOUND_BUTTON_CLICK.play()
             elif self.has_shovel:
                 if self.inArea(self.shovel_box_rect, *mouse_pos):
                     self.drag_shovel = not self.drag_shovel
                     if not self.drag_shovel:
                         self.removeMouseImagePlus()
-                    # 播放点击铲子的音效
                     c.SOUND_SHOVEL.play()
                 elif self.drag_shovel:
-                    # 移出这地方的植物
                     self.shovelRemovePlant(mouse_pos)
 
         for car in self.cars:
@@ -763,7 +724,6 @@ class Level(tool.State):
                 car.update(self.game_info)
 
         self.menubar.update(self.current_time)
-
 
         # 检查碰撞
         self.checkBulletCollisions()
@@ -1403,6 +1363,8 @@ class Level(tool.State):
                     self.killPlant(plant)
 
     def checkVictory(self):
+        if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
+            return False
         if self.map_data[c.SPAWN_ZOMBIES] == c.SPAWN_ZOMBIES_LIST:
             if len(self.zombie_list) > 0:
                 return False
@@ -1421,6 +1383,8 @@ class Level(tool.State):
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:
                 if zombie.rect.right < -20 and (not zombie.losthead) and (zombie.state != c.DIE):
+                    self.next = c.MODE_LEADERBOARD   # 你的排行榜狀態常數
+                    self.done = True
                     return True
         return False
 
