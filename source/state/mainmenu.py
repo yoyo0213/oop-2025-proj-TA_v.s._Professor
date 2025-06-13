@@ -88,8 +88,7 @@ class Menu(tool.State):
         self.adventure_clicked = False
         self.option_button_clicked = False
 
-    def checkHilight(self, x:int, y:int): #light button
-
+    def checkHilight(self, x:int, y:int):
         if self.inArea(self.adventure_rect, x, y):
             self.adventure_highlight_time = self.current_time
         elif self.inArea(self.littleGame_rect, x, y):
@@ -100,7 +99,7 @@ class Menu(tool.State):
             self.option_button_highlight_time = self.current_time
         elif self.inArea(self.help_rect, x, y):
             self.help_hilight_time = self.current_time
-
+            
         self.adventure_image = self.chooseHilightImage(self.adventure_highlight_time, self.adventure_frames)
         self.exit_image = self.chooseHilightImage(self.exit_highlight_time, self.exit_frames)
         self.option_button_image = self.chooseHilightImage(self.option_button_highlight_time, self.option_button_frames)
@@ -118,18 +117,15 @@ class Menu(tool.State):
         self.adventure_clicked = True
         self.adventure_timer = self.adventure_start = self.current_time
         self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
-        self.game_info[c.LITTLEGAME_NUM] = 1
         # 播放进入音效
         pg.mixer.music.stop()
         c.SOUND_EVILLAUGH.play()
         c.SOUND_LOSE.play()
 
-    # scoreboard
+    # 按到小游戏
     def respondLittleGameClick(self):
         self.done = True
-        self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
-        # 播放点击音效
-        c.SOUND_BUTTON_CLICK.play()
+
 
     # 点击到退出按钮，修改转态的done属性
     def respondExitClick(self):
