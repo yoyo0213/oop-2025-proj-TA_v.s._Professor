@@ -19,9 +19,8 @@ def main():
     # start
     game = tool.Control()
 
-    # 只玩堅果保齡球（little game #0）
-    game.game_info[c.GAME_MODE] = c.MODE_LITTLEGAME
-    game.game_info[c.LITTLEGAME_NUM] = 1
+
+    
 
     # 僅註冊 Level 狀態即可
     state_dict = {  c.MAIN_MENU:    mainmenu.Menu(),
