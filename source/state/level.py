@@ -12,7 +12,6 @@ class Level(tool.State):
         tool.State.__init__(self)
         self._logged_reset= False
         self._logged_first_wave = False
-
     def startup(self, current_time, persist):
         self.game_info = persist
         self.persist = self.game_info
@@ -34,19 +33,8 @@ class Level(tool.State):
         self.initState()
 
     def loadMap(self):
-        # 冒险模式
-        if self.game_info[c.GAME_MODE] == c.MODE_ADVENTURE:
-            if 0 <= self.game_info[c.LEVEL_NUM] < map.TOTAL_LEVEL:
-                self.map_data = map.LEVEL_MAP_DATA[self.game_info[c.LEVEL_NUM]]
-                pg.display.set_caption(f"pypvz: 冒险模式 {self.map_data[c.GAME_TITLE]}")
-            else:
-                self.game_info[c.LEVEL_NUM] = 1
-                self.saveUserData()
-                self.map_data = map.LEVEL_MAP_DATA[self.game_info[c.LEVEL_NUM]]
-                pg.display.set_caption(f"pypvz: 冒险模式 {self.map_data[c.GAME_TITLE]}")
-                logger.warning("关卡数设定错误！进入默认的第一关！\n")
         # 小游戏模式
-        elif self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
+        if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
             if 0 <= self.game_info[c.LITTLEGAME_NUM] < map.TOTAL_LITTLE_GAME:
                 self.map_data = map.LITTLE_GAME_MAP_DATA[self.game_info[c.LITTLEGAME_NUM]]
                 pg.display.set_caption(f"pypvz: 玩玩小游戏 {self.map_data[c.GAME_TITLE]}")
@@ -182,7 +170,7 @@ class Level(tool.State):
     # ------------------------------------------------------------
     # 【無盡生存】打完最後一面旗幟後 → 進入下一輪
     # ------------------------------------------------------------
-        if (self.game_info[c.GAME_MODE] == c.MODE_SURVIVAL and
+        if (self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME and
             self.wave_num >= self.map_data[c.NUM_FLAGS] * 10):
             if any(len(g) for g in self.zombie_groups):
                 return
@@ -261,19 +249,6 @@ class Level(tool.State):
             else:
                 if current_time - 23000 < self.wave_time:
                     self.wave_time = current_time - 23000
-
-
-
-    # 旧机制，目前仅用于调试
-    def setupZombies(self):
-        def takeTime(element):
-            return element[0]
-
-        self.zombie_list = []
-        for data in self.map_data[c.ZOMBIE_LIST]:
-            self.zombie_list.append((data["time"], data["name"], data["map_y"]))
-        self.zombie_start_time = 0
-        self.zombie_list.sort(key=takeTime)
 
     def setupCars(self):
         self.cars = []
