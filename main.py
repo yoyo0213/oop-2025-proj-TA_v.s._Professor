@@ -17,9 +17,9 @@ from source import tool
 from source import constants as c
 from source.state import level  # 這裡僅需 Level 狀態
 from source.state import mainmenu
+from source.state import screen
 def main():
-    """程式進入點"""
-    # === 狀態機啟動 ===
+    # start
     game = tool.Control()
 
     # 只玩堅果保齡球（little game #0）
@@ -27,10 +27,13 @@ def main():
     game.game_info[c.LITTLEGAME_NUM] = 1
 
     # 僅註冊 Level 狀態即可
-    state_dict = {
-                c.MAIN_MENU: mainmenu.Menu(),
-                c.LEVEL: level.Level()
-                  }
+    state_dict = {  c.MAIN_MENU:    mainmenu.Menu(),
+                        c.GAME_VICTORY: screen.GameVictoryScreen(),
+                        c.GAME_LOSE:    screen.GameLoseScreen(),
+                        c.LEVEL:        level.Level(),
+                        c.SCOREBOARD:   screen.ScoreboardScreen(),
+                        c.HELP_SCREEN:  screen.HelpScreen(),
+                        }
     game.setup_states(state_dict, c.MAIN_MENU)
     game.run()
 
