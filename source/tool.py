@@ -253,3 +253,4 @@ if os.path.exists(c.ORIGINAL_LOGO):    # 设置窗口图标，仅对非Nuitka时
     pg.display.set_icon(pg.image.load(c.ORIGINAL_LOGO))
 
 GFX = load_all_gfx(c.PATH_IMG_DIR)
+#print (GFX)
