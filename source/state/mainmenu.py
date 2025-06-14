@@ -147,47 +147,15 @@ class Menu(tool.State):
         text_rect.y = 18
         self.return_button.blit(text, text_rect)
 
-        # 音量+、音量-
         frame_rect = (0, 0, 39, 41)
         font = pg.font.Font(c.FONT_PATH, 35)
         font.bold = True
-        # 音量+
-        self.sound_volume_plus_button = tool.get_image_alpha(tool.GFX[c.SOUND_VOLUME_BUTTON], *frame_rect, c.BLACK)
-        sign = font.render("+", True, c.YELLOWGREEN)
-        sign_rect = sign.get_rect()
-        sign_rect.x = 8
-        sign_rect.y = -4
-        self.sound_volume_plus_button.blit(sign, sign_rect)
-        self.sound_volume_plus_button_rect = self.sound_volume_plus_button.get_rect()
-        self.sound_volume_plus_button_rect.x = 500
-        # 音量-
-        self.sound_volume_minus_button = tool.get_image_alpha(tool.GFX[c.SOUND_VOLUME_BUTTON], *frame_rect, c.BLACK)
-        sign = font.render("-", True, c.YELLOWGREEN)
-        sign_rect = sign.get_rect()
-        sign_rect.x = 12
-        sign_rect.y = -6
-        self.sound_volume_minus_button.blit(sign, sign_rect)
-        self.sound_volume_minus_button_rect = self.sound_volume_minus_button.get_rect()
-        self.sound_volume_minus_button_rect.x = 450
-        # 音量+、-应当处于同一高度
-        self.sound_volume_minus_button_rect.y = self.sound_volume_plus_button_rect.y = 250
-
-
-    
 
     def respondOptionButtonClick(self):
         self.option_button_clicked = True
 
 
-    def showCurrentVolumeImage(self, surface:pg.Surface):
-        # 由于音量可变，因此这一内容不能在一开始就结束加载，而应当不断刷新不断显示
-        font = pg.font.Font(c.FONT_PATH, 30)
-        volume_tips = font.render(f"音量：{round(self.game_info[c.SOUND_VOLUME]*100):3}%", True, c.LIGHTGRAY)
-        volume_tips_rect = volume_tips.get_rect()
-        volume_tips_rect.x = 275
-        volume_tips_rect.y = 247
-        surface.blit(volume_tips, volume_tips_rect)
-
+   
     def update(self, surface:pg.Surface, current_time:int, mouse_pos:list, mouse_click):
         self.current_time = self.game_info[c.CURRENT_TIME] = current_time
         
@@ -198,8 +166,7 @@ class Menu(tool.State):
         surface.blit(self.option_button_image, self.option_button_rect)
         surface.blit(self.help_image, self.help_rect)
         if self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]:
-            surface.blit(self.sunflower_trophy, self.sunflower_trophy_rect)
-
+            pass
         # 点到冒险模式后播放动画
         if self.adventure_clicked:
             # 乱写一个不用信号标记的循环播放 QwQ
@@ -213,39 +180,16 @@ class Menu(tool.State):
         elif self.option_button_clicked:
             surface.blit(self.big_menu, self.big_menu_rect)
             surface.blit(self.return_button, self.return_button_rect)
-            surface.blit(self.sound_volume_plus_button, self.sound_volume_plus_button_rect)
-            surface.blit(self.sound_volume_minus_button, self.sound_volume_minus_button_rect)
-            self.showCurrentVolumeImage(surface)
             if mouse_pos:
                 # 返回
                 if self.inArea(self.return_button_rect, *mouse_pos):
                     self.option_button_clicked = False
-                    
-                # 音量+
-                elif self.inArea(self.sound_volume_plus_button_rect, *mouse_pos):
-                    self.game_info[c.SOUND_VOLUME] = round(min(self.game_info[c.SOUND_VOLUME] + 0.05, 1), 2)
-                    # 一般不会有人想把音乐和音效分开设置，故pg.mixer.Sound.set_volume()和pg.mixer.music.set_volume()需要一起用
-                    pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-                    for i in c.SOUNDS:
-                        i.set_volume(self.game_info[c.SOUND_VOLUME])
-                    
-                    self.saveUserData()
-                # 音量-
-                elif self.inArea(self.sound_volume_minus_button_rect, *mouse_pos):
-                    self.game_info[c.SOUND_VOLUME] = round(max(self.game_info[c.SOUND_VOLUME] - 0.05, 0), 2)
-                    # 一般不会有人想把音乐和音效分开设置，故pg.mixer.Sound.set_volume()和pg.mixer.music.set_volume()需要一起用
-                    pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-                    for i in c.SOUNDS:
-                        i.set_volume(self.game_info[c.SOUND_VOLUME])
-                    
-                    self.saveUserData()
-        # 没有点到前两者时常规行检测所有按钮的点击和高亮
         else:
             # 先检查选项高亮预览
             x, y = pg.mouse.get_pos()
             self.checkHilight(x, y)
             if (self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]):
-                self.checkSunflowerTrophyInfo(surface, x, y)
+                pass
             if mouse_pos:
                 if self.inArea(self.adventure_rect, *mouse_pos):
                     self.respondAdventureClick()
