@@ -124,7 +124,8 @@ class Menu(tool.State):
 
     # 按到小游戏
     def respondLittleGameClick(self):
-        self.done = False
+        self.done = True
+        self.next = c.SCOREBOARD
 
 
     # 点击到退出按钮，修改转态的done属性
