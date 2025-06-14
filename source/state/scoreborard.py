@@ -31,34 +31,3 @@ class Scoreboard:
         """Clear all scores from the scoreboard."""
         self.scores = []
         self.save_scores()
-"""
-    def display_scoreboard(screen, clock):
-        scoreboard = Scoreboard()
-        scores = scoreboard.get_top_scores()
-        font = pygame.font.SysFont("Arial", 36)
-        small_font = pygame.font.SysFont("Arial", 24)
-
-        showing = True
-        while showing:
-            screen.fill((50, 50, 80))
-            title = font.render("🏆 排行榜 🏆", True, (255, 255, 0))
-            screen.blit(title, (300, 50))
-
-            for i, entry in enumerate(scores):
-                text = f"{i+1}. {entry['name']} - {entry['score']} 分 - {entry['time']}"
-                text_surface = small_font.render(text, True, (255, 255, 255))
-                screen.blit(text_surface, (100, 120 + i * 40))
-
-            info = small_font.render("按任意鍵返回", True, (200, 200, 200))
-            screen.blit(info, (280, 550))
-
-            pygame.display.flip()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    showing = False
-                elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                    showing = False
-
-            clock.tick(30)
-"""

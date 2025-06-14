@@ -254,6 +254,7 @@ class HelpScreen(tool.State):
 class EndScreen(tool.State):
     def __init__(self):
         super().__init__()
+        self.total_time =0
     def startup(self,current_time,persist):
         self.start_time =current_time
         self.persist = persist
@@ -261,7 +262,7 @@ class EndScreen(tool.State):
     def setupImage(self):
         pass
     def update(self, surface, current_time, mouse_pos, mouse_click):
-        pass
+        print(self.total_time)
 class ScoreScreen(tool.State):
     def __init__(self):
         tool.State.__init__(self)
