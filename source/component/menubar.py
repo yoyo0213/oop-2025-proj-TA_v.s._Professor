@@ -189,8 +189,7 @@ class MenuBar():
                 if card.canClick(self.sun_value, self.current_time):
                     result = (c.PLANT_CARD_INFO[card.index][c.PLANT_NAME_INDEX], card)
                 else:
-                    # 播放无法使用该卡片的警告音
-                    c.SOUND_CANNOT_CHOOSE_WARNING.play()
+                    pass
                 break
         return result
     
@@ -306,8 +305,6 @@ class Panel():
         if delete_card:
             self.selected_cards.remove(delete_card)
             self.selected_num -= 1
-            # 播放点击音效
-            c.SOUND_TAPPING_CARD.play()
             if delete_card.info[c.PLANT_NAME_INDEX] == c.COFFEEBEAN:
                 for i in self.card_list:
                     if i.not_recommend == c.REASON_SLEEP_BUT_COFFEE_BEAN:
@@ -323,8 +320,6 @@ class Panel():
             if card.checkMouseClick(mouse_pos):
                 if card.canSelect():
                     self.addCard(card)
-                    # 播放点击音效
-                    c.SOUND_TAPPING_CARD.play()
                     if card.info[c.PLANT_NAME_INDEX] == c.COFFEEBEAN:
                         for i in self.card_list:
                             if i.not_recommend == c.REASON_WILL_SLEEP:

@@ -314,5 +314,4 @@ class ScoreScreen(tool.State):
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 if mouse_click:
                     self.next = c.MAIN_MENU
-                    
                     self.done = True
