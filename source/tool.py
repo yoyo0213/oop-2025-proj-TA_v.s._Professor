@@ -160,7 +160,6 @@ class Control():
 #below are some tools to load images
 def get_image(  sheet:pg.Surface, x:int, y:int, width:int, height:int,
                 colorkey:tuple[int]=c.BLACK, scale:int=1) -> pg.Surface:
-        # 不保留alpha通道的图片导入
         image = pg.Surface([width, height])
         rect = image.get_rect()
 
@@ -174,7 +173,6 @@ def get_image(  sheet:pg.Surface, x:int, y:int, width:int, height:int,
 
 def get_image_alpha(sheet:pg.Surface, x:int, y:int, width:int, height:int,
                     colorkey:tuple[int]=c.BLACK, scale:int=1) -> pg.Surface:
-    # 保留alpha通道的图片导入
     image = pg.Surface([width, height], SRCALPHA)
     rect = image.get_rect()
 
@@ -205,7 +203,7 @@ def load_image_frames(  directory:str, image_name:str,
             tmp[index]= img
             frame_num += 1
 
-    for i in range(frame_num):  # 这里注意编号必须连续，否则会出错
+    for i in range(frame_num):  
         frame_list.append(tmp[i])
     return frame_list
 
@@ -246,10 +244,9 @@ def load_all_gfx(   directory:str, colorkey:tuple[int]=c.WHITE,
                         graphics[name] = img
     return graphics
 
-pg.display.set_caption(c.ORIGINAL_CAPTION)  # 设置标题
-SCREEN = pg.display.set_mode(c.SCREEN_SIZE) # 设置初始屏幕
-#pg.mixer.set_num_channels(255)  # 设置可以同时播放的音频数量，默认为8，经常不够用
-if os.path.exists(c.ORIGINAL_LOGO):    # 设置窗口图标，仅对非Nuitka时生效，Nuitka不需要包括额外的图标文件，自动跳过这一过程即可
+pg.display.set_caption(c.ORIGINAL_CAPTION)  
+SCREEN = pg.display.set_mode(c.SCREEN_SIZE) 
+if os.path.exists(c.ORIGINAL_LOGO):  
     pg.display.set_icon(pg.image.load(c.ORIGINAL_LOGO))
 
 GFX = load_all_gfx(c.PATH_IMG_DIR)

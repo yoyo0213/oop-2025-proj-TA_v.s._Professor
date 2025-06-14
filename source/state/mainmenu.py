@@ -15,7 +15,6 @@ class Menu(tool.State):
         self.setupBackground()
         self.setupOptions()
         self.setupOptionMenu()
-        self.setupSunflowerTrophy()
         
     def setupBackground(self):
         frame_rect = (80, 0, 800, 600)
@@ -29,9 +28,8 @@ class Menu(tool.State):
         self.bg_rect.y = 0
 
     def setupOptions(self):
-        # 冒险模式
+        # survival
         frame_rect = (0, 0, 330, 144)
-        # 写成列表生成器方便IDE识别与自动补全
         self.adventure_frames = [tool.get_image_alpha(tool.GFX[f"{c.OPTION_ADVENTURE}_{i}"], *frame_rect) for i in range(2)]
         self.adventure_image = self.adventure_frames[0]
         self.adventure_rect = self.adventure_image.get_rect()
@@ -39,7 +37,7 @@ class Menu(tool.State):
         self.adventure_rect.y = 60
         self.adventure_highlight_time = 0
 
-        # 小游戏
+        # scoreboard
         littleGame_frame_rect = (0, 7, 317, 135)
         self.littleGame_frames = [tool.get_image_alpha(tool.GFX[f"{c.LITTLEGAME_BUTTON}_{i}"], *littleGame_frame_rect) for i in range(2)]
         self.littleGame_image = self.littleGame_frames[0]
@@ -48,7 +46,7 @@ class Menu(tool.State):
         self.littleGame_rect.y = 175
         self.littleGame_highlight_time = 0
 
-        # 退出按钮
+        # exit
         exit_frame_rect = (0, 0, 47, 27)
         self.exit_frames = [tool.get_image_alpha(tool.GFX[f"{c.EXIT}_{i}"], *exit_frame_rect, scale=1.1) for i in range(2)]
         self.exit_image = self.exit_frames[0]
@@ -57,7 +55,7 @@ class Menu(tool.State):
         self.exit_rect.y = 507
         self.exit_highlight_time = 0
 
-        # 选项按钮
+        # menu
         option_button_frame_rect = (0, 0, 81, 31)
         self.option_button_frames = [tool.get_image_alpha(tool.GFX[f"{c.OPTION_BUTTON}_{i}"], *option_button_frame_rect) for i in range(2)]
         self.option_button_image = self.option_button_frames[0]
@@ -66,7 +64,7 @@ class Menu(tool.State):
         self.option_button_rect.y = 490
         self.option_button_highlight_time = 0
 
-        # 帮助菜单
+        # help
         help_frame_rect = (0, 0, 48, 22)
         self.help_frames = [tool.get_image_alpha(tool.GFX[f"{c.HELP}_{i}"], *help_frame_rect) for i in range(2)]
         self.help_image = self.help_frames[0]
@@ -75,7 +73,7 @@ class Menu(tool.State):
         self.help_rect.y = 520
         self.help_hilight_time = 0
         
-        # 计时器与点击信号记录器
+        # timer
         self.adventure_start = 0
         self.adventure_timer = 0
         self.adventure_clicked = False
@@ -110,9 +108,7 @@ class Menu(tool.State):
         self.adventure_clicked = True
         self.adventure_timer = self.adventure_start = self.current_time
         self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
-        # 播放进入音效
 
-    # 按到小游戏
     def respondLittleGameClick(self):
         self.done = True
         self.next = c.SCOREBOARD
@@ -176,35 +172,8 @@ class Menu(tool.State):
         # 音量+、-应当处于同一高度
         self.sound_volume_minus_button_rect.y = self.sound_volume_plus_button_rect.y = 250
 
-    def setupSunflowerTrophy(self):
-        # 设置金银向日葵图片信息
-        if (self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]):
-            if (self.game_info[c.LEVEL_COMPLETIONS] and self.game_info[c.LITTLEGAME_COMPLETIONS]):
-                frame_rect = (157, 0, 157, 269)
-            else:
-                frame_rect = (0, 0, 157, 269)
-            self.sunflower_trophy = tool.get_image_alpha(tool.GFX[c.TROPHY_SUNFLOWER], *frame_rect, c.BLACK)
-            self.sunflower_trophy_rect = self.sunflower_trophy.get_rect()
-            self.sunflower_trophy_rect.x = 0
-            self.sunflower_trophy_rect.y = 280
-            self.sunflower_trophy_show_info_time = 0
 
-    def checkSunflowerTrophyInfo(self, surface:pg.Surface, x:int, y:int):
-        if self.inArea(self.sunflower_trophy_rect, x, y):
-            self.sunflower_trophy_show_info_time = self.current_time
-        if (self.current_time - self.sunflower_trophy_show_info_time) < 80:
-            font = pg.font.Font(c.FONT_PATH, 14)
-            if (self.game_info[c.LEVEL_COMPLETIONS] and self.game_info[c.LITTLEGAME_COMPLETIONS]):
-                infoText = f"目前您一共完成了：冒险模式{self.game_info[c.LEVEL_COMPLETIONS]}轮，玩玩小游戏{self.game_info[c.LITTLEGAME_COMPLETIONS]}轮"
-            elif self.game_info[c.LEVEL_COMPLETIONS]:
-                infoText = f"目前您一共完成了：冒险模式{self.game_info[c.LEVEL_COMPLETIONS]}轮；完成其他所有游戏模式以获得金向日葵奖杯！"
-            else:
-                infoText = f"目前您一共完成了：玩玩小游戏{self.game_info[c.LITTLEGAME_COMPLETIONS]}轮；完成其他所有游戏模式以获得金向日葵奖杯！"
-            infoImg = font.render(infoText , True, c.BLACK, c.LIGHTYELLOW)
-            infoImg_rect = infoImg.get_rect()
-            infoImg_rect.x = self.sunflower_trophy_rect.x
-            infoImg_rect.y = self.sunflower_trophy_rect.bottom - 14
-            surface.blit(infoImg, infoImg_rect)
+    
 
     def respondOptionButtonClick(self):
         self.option_button_clicked = True
