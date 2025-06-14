@@ -115,6 +115,7 @@ LEVEL = "level"
 AWARD_SCREEN = "award screen"
 HELP_SCREEN = "help screen"
 SCOREBOARD = "scoreboard"
+ENDSCREEN = "end screen"
 
 # names of images of each state
 MAIN_MENU_IMAGE = "MainMenu"
@@ -123,6 +124,7 @@ GAME_LOSE_IMAGE = "GameLose"
 GAME_VICTORY_IMAGE = "GameVictory"
 AWARD_SCREEN_IMAGE = "AwardScreen"
 HELP_SCREEN_IMAGE = "HelpScreen"
+SCORE_SCREEN_IMAGE = "ScoreScreen"
 
 # about maps
 BACKGROUND_NAME = "Background"

@@ -19,15 +19,12 @@ def main():
     # start
     game = tool.Control()
 
-
-    
-
-    # 僅註冊 Level 狀態即可
     state_dict = {  c.MAIN_MENU:    mainmenu.Menu(),
                         c.GAME_VICTORY: screen.GameVictoryScreen(),
                         c.GAME_LOSE:    screen.GameLoseScreen(),
                         c.LEVEL:        level.Level(),
-                        c.SCOREBOARD:   screen.ScoreboardScreen(),
+                        c.ENDSCREEN:     screen.EndScreen(),
+                        c.SCOREBOARD:   screen.ScoreScreen(),
                         c.HELP_SCREEN:  screen.HelpScreen(),
                         }
     game.setup_states(state_dict, c.MAIN_MENU)
