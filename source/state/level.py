@@ -12,6 +12,7 @@ class Level(tool.State):
         tool.State.__init__(self)
         self._logged_reset= False
         self._logged_first_wave = False
+        self.toal_play_time=0
     def startup(self, current_time, persist):
         self.game_info = persist
         self.persist = self.game_info
@@ -263,7 +264,13 @@ class Level(tool.State):
             self.choose(mouse_pos, mouse_click)
         elif self.state == c.PLAY:
             self.play(mouse_pos, mouse_click)
+        if not hasattr(self, 'last_update_time'):
+            self.last_update_time = self.current_time
+        delta = current_time -self.last_update_time
+        if not self.pause and not self.show_game_menu:
+            self.toal_play_time += delta
 
+        self.last_update_time = current_time
         self.draw(surface)
 
     def gameTime(self, current_time):
@@ -1395,8 +1402,9 @@ class Level(tool.State):
             # 播放失败音效
             c.SOUND_LOSE.play()
             c.SOUND_SCREAM.play()
-            self.next = c.GAME_LOSE
+            self.next = c.ENDSCREEN
             self.done = True
+
 
     def drawMouseShow(self, surface):
         if self.hint_plant:
