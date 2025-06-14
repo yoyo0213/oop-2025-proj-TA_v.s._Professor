@@ -192,8 +192,7 @@ class Level(tool.State):
             self.wave_num     = 1
             self.wave_time    = current_time
             self.wave_zombies = self.waves[0]               # ← assign the new wave
-            self.zombie_num   = len(self.wave_zombies)      # ← update count
-            c.SOUND_ZOMBIE_COMING.play()                    # ← (optional) play sound
+            self.zombie_num   = len(self.wave_zombies)      # ← update count                  # ← (optional) play sound
             self.level_progress_zombie_head_image_rect.x = \
                 self.level_progress_bar_image_rect.x + 75
             return
@@ -211,7 +210,6 @@ class Level(tool.State):
                     if 0 <= self.wave_num - 1 < len(self.waves):
                         self.wave_zombies = self.waves[self.wave_num - 1]
                         self.zombie_num = len(self.wave_zombies)
-                        c.SOUND_ZOMBIE_COMING.play()
             return
 
         if self.wave_num % 10 != 9:
@@ -225,7 +223,6 @@ class Level(tool.State):
                 if 0 <= self.wave_num - 1 < len(self.waves):
                     self.wave_zombies = self.waves[self.wave_num - 1]
                     self.zombie_num = len(self.wave_zombies)
-                    c.SOUND_ZOMBIE_VOICE.play()
         else:
             #delay = 45000
             delay=200
@@ -237,7 +234,7 @@ class Level(tool.State):
                 if 0 <= self.wave_num - 1 < len(self.waves):
                     self.wave_zombies = self.waves[self.wave_num - 1]
                     self.zombie_num = len(self.wave_zombies)
-                    c.SOUND_HUGE_WAVE_APPROCHING.play()
+                    
             elif current_time - self.wave_time >= (delay - 2000):
                 self.show_hugewave_approching_time = current_time
 
@@ -306,11 +303,6 @@ class Level(tool.State):
         self.state = c.CHOOSE
         self.panel = menubar.Panel(c.CARDS_TO_CHOOSE, self.map_data[c.INIT_SUN_NAME], self.background_type)
 
-        # 播放选卡音乐
-        pg.mixer.music.stop()
-        pg.mixer.music.load(os.path.join(c.PATH_MUSIC_DIR, "chooseYourSeeds.opus"))
-        pg.mixer.music.play(-1, 0)
-        pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
 
     def choose(self, mouse_pos, mouse_click):
         # 如果暂停
@@ -324,15 +316,9 @@ class Level(tool.State):
                 self.initPlay(self.panel.getSelectedCards())
             elif self.inArea(self.little_menu_rect, *mouse_pos):
                 self.show_game_menu = True
-                c.SOUND_BUTTON_CLICK.play()
 
     def initPlay(self, card_list):
 
-        # 播放bgm
-        pg.mixer.music.stop()
-        pg.mixer.music.load(os.path.join(c.PATH_MUSIC_DIR, self.bgm))
-        pg.mixer.music.play(-1, 0)
-        pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
 
         self.survival_rounds = 0
         self.state = c.PLAY
@@ -509,14 +495,14 @@ class Level(tool.State):
                 self.show_game_menu = False
                 # 继续播放音乐
                 pg.mixer.music.unpause()
-                # 播放点击音效
-                c.SOUND_BUTTON_CLICK.play()
+                # 播放点击音效c.SOUND_BUTTON_CLICK.play()
+                
             # 重新开始键
             elif self.inArea(self.restart_button_rect, *mouse_pos):
                 self.done = True
                 self.next = c.LEVEL
                 # 播放点击音效
-                c.SOUND_BUTTON_CLICK.play()
+                
             # 主菜单键
             elif self.inArea(self.mainMenu_button_rect, *mouse_pos):
                 self.done = True
@@ -524,7 +510,7 @@ class Level(tool.State):
                 self.persist = self.game_info
                 self.persist[c.CURRENT_TIME] = 0
                 # 播放点击音效
-                c.SOUND_BUTTON_CLICK.play()
+                
             # 音量+
             elif self.inArea(self.sound_volume_plus_button_rect, *mouse_pos):
                 self.game_info[c.SOUND_VOLUME] = round(min(self.game_info[c.SOUND_VOLUME] + 0.05, 1), 2)
@@ -532,7 +518,7 @@ class Level(tool.State):
                 pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
                 for i in c.SOUNDS:
                     i.set_volume(self.game_info[c.SOUND_VOLUME])
-                c.SOUND_BUTTON_CLICK.play()
+                
                 # 将音量信息存档
                 self.saveUserData()
             elif self.inArea(self.sound_volume_minus_button_rect, *mouse_pos):
@@ -541,7 +527,7 @@ class Level(tool.State):
                 pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
                 for i in c.SOUNDS:
                     i.set_volume(self.game_info[c.SOUND_VOLUME])
-                c.SOUND_BUTTON_CLICK.play()
+                
                 # 将音量信息存档
                 self.saveUserData()
 
@@ -660,7 +646,7 @@ class Level(tool.State):
                 if sun.checkCollision(*mouse_pos):
                     self.menubar.increaseSunValue(sun.sun_value)
                     clicked_sun = True
-                    c.SOUND_COLLECT_SUN.play()
+                    
 
         # 拖动植物或者铲子
         if not self.drag_plant and mouse_pos and mouse_click[0] and not clicked_sun:
@@ -669,7 +655,7 @@ class Level(tool.State):
                 self.setupMouseImage(self.click_result[0], self.click_result[1])
                 self.click_result[1].clicked = True
                 clicked_cards_or_map = True
-                c.SOUND_CLICK_CARD.play()
+                
         elif self.drag_plant:
             if mouse_click[1]:
                 self.removeMouseImage()
@@ -691,13 +677,11 @@ class Level(tool.State):
         if mouse_click[0] and (not clicked_sun) and (not clicked_cards_or_map):
             if self.inArea(self.little_menu_rect, *mouse_pos):
                 self.show_game_menu = True
-                c.SOUND_BUTTON_CLICK.play()
             elif self.has_shovel:
                 if self.inArea(self.shovel_box_rect, *mouse_pos):
                     self.drag_shovel = not self.drag_shovel
                     if not self.drag_shovel:
                         self.removeMouseImagePlus()
-                    c.SOUND_SHOVEL.play()
                 elif self.drag_shovel:
                     self.shovelRemovePlant(mouse_pos)
 
@@ -894,7 +878,7 @@ class Level(tool.State):
         # print(self.new_plant_and_positon)
 
         # 播放种植音效
-        c.SOUND_PLANT.play()
+        
 
     def setupHintImage(self):
         pos = self.canSeedPlant(self.plant_name)
@@ -1061,7 +1045,7 @@ class Level(tool.State):
                     if zombie.name in {c.POLE_VAULTING_ZOMBIE} and (not zombie.jumped):
                         if target_plant.name == c.GIANTWALLNUT:
                             zombie.health = 0
-                            c.SOUND_BOWLING_IMPACT.play()
+                            
                         elif not zombie.jumping:
                             zombie.jump_map_x = min(self.map_x_len - 1, zombie.prey_map_x)
                             zombie.jump_map_y = min(self.map_y_len - 1, zombie.prey_map_y)
@@ -1085,14 +1069,13 @@ class Level(tool.State):
                             else:
                                 zombie.setDamage(c.WALLNUT_BOWLING_DAMAGE, damage_type=c.ZOMBIE_WALLNUT_BOWLING_DANMAGE)
                             target_plant.changeDirection(i)
-                            # 播放撞击音效
-                            c.SOUND_BOWLING_IMPACT.play()
+                            
                     elif target_plant.name == c.REDWALLNUTBOWLING:
                         if target_plant.state == c.IDLE:
                             target_plant.setAttack()
                     elif target_plant.name == c.GIANTWALLNUT:
                         zombie.health = 0
-                        c.SOUND_BOWLING_IMPACT.play()
+                        
                     elif zombie.target_y_change:
                         # 大蒜作用正在生效的僵尸不进行传递
                         continue
@@ -1162,7 +1145,6 @@ class Level(tool.State):
 
     def freezeZombies(self, plant):
         # 播放冻结音效
-        c.SOUND_FREEZE.play()
 
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:
@@ -1192,11 +1174,9 @@ class Level(tool.State):
                 if target_plant.name == c.DOOMSHROOM:
                     self.plant_groups[map_y].add(plant.Hole(target_plant.original_x, target_plant.original_y, self.map.map[map_y][map_x][c.MAP_PLOT_TYPE]))
             elif target_plant.name not in c.PLANT_DIE_SOUND_EXCEPTIONS:
-                # 触发植物死亡音效
-                c.SOUND_PLANT_DIE.play()
+                pass
         else:
-            # 用铲子移除植物时播放音效
-            c.SOUND_PLANT.play()
+            pass
 
         # 整理地图信息
         if self.bar_type != c.CHOOSEBAR_BOWLING:
@@ -1378,30 +1358,21 @@ class Level(tool.State):
                     self.game_info[c.LEVEL_COMPLETIONS] += 1
                     self.game_info[c.LEVEL_NUM] = 1
                     self.next = c.AWARD_SCREEN
-                    # 播放大胜利音效
-                    c.SOUND_FINAL_FANFARE.play()
                 else:
                     self.next = c.GAME_VICTORY
-                    # 播放胜利音效
-                    c.SOUND_WIN.play()
             elif self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
                 self.game_info[c.LITTLEGAME_NUM] += 1
                 if self.game_info[c.LITTLEGAME_NUM] >= map.TOTAL_LITTLE_GAME:
                     self.game_info[c.LITTLEGAME_COMPLETIONS] += 1
                     self.game_info[c.LITTLEGAME_NUM] = 1
                     self.next = c.AWARD_SCREEN
-                    # 播放大胜利音效
-                    c.SOUND_FINAL_FANFARE.play()
+
                 else:
                     self.next = c.GAME_VICTORY
-                    # 播放胜利音效
-                    c.SOUND_WIN.play()
+                    
             self.done = True
             self.saveUserData()
         elif self.checkLose():
-            # 播放失败音效
-            c.SOUND_LOSE.play()
-            c.SOUND_SCREAM.play()
             self.next = c.ENDSCREEN
             self.done = True
 

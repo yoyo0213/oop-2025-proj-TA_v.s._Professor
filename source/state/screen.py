@@ -75,11 +75,6 @@ class GameVictoryScreen(Screen):
         self.game_info = persist
         self.setupImage(self.image_name)
         pg.display.set_caption("pypvz: 战斗胜利！")
-        pg.mixer.music.stop()
-        pg.mixer.music.load(os.path.join(c.PATH_MUSIC_DIR, "zenGarden.opus"))
-        pg.mixer.music.play(-1, 0)
-        pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-
 class GameLoseScreen(Screen):
     def __init__(self):
         Screen.__init__(self)
@@ -90,7 +85,7 @@ class GameLoseScreen(Screen):
         self.persist = persist
         self.game_info = persist
         self.setupImage(self.image_name, (-118, -40, 800, 600), c.WHITE)
-        pg.display.set_caption("pypvz: 战斗失败！")
+        pg.display.set_caption("pypvz: The game is over")
         # 停止播放原来关卡中的音乐
         pg.mixer.music.stop()
 """ award screen abandoned
@@ -225,8 +220,6 @@ class HelpScreen(tool.State):
         self.game_info = persist
         self.setupImage()
         pg.display.set_caption("pypvz: 帮助")
-        pg.mixer.music.stop()
-        c.SOUND_HELP_SCREEN.play()
 
     def setupImage(self):
         # 主体
@@ -267,7 +260,7 @@ class EndScreen(tool.State):
         self.game_info =persist
     def setupImage(self):
         pass
-    def update(self):
+    def update(self, surface, current_time, mouse_pos, mouse_click):
         pass
 class ScoreScreen(tool.State):
     def __init__(self):
@@ -279,21 +272,18 @@ class ScoreScreen(tool.State):
         self.game_info = persist
         self.setupImage()
         pg.display.set_caption("pypvz: 排行榜")
-        pg.mixer.music.stop()
-        #c.SOUND_SCORE_SCREEN.play()
-
         # 載入排行榜資料
         self.scoreboard = sb.Scoreboard()
 
     def setupImage(self):
-        # 主體背景
+        # background
         frame_rect = (-100, -50, 800, 600)
         self.image = tool.get_image(tool.GFX[c.GAME_LOSE_IMAGE], *frame_rect, colorkey=(0, 255, 255))
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
 
-        # 主選單按鈕
+        # go back to main menu 
         button_rect = (0, 0, 111, 26)
         self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *button_rect)
         self.main_menu_button_image_rect = self.main_menu_button_image.get_rect()

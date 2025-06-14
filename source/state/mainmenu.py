@@ -16,14 +16,7 @@ class Menu(tool.State):
         self.setupOptions()
         self.setupOptionMenu()
         self.setupSunflowerTrophy()
-        pg.mixer.music.stop()
-        pg.mixer.music.load(os.path.join(c.PATH_MUSIC_DIR, "intro.opus"))
-        pg.mixer.music.play(-1, 0)
-        pg.display.set_caption(c.ORIGINAL_CAPTION)
-        pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-        for i in c.SOUNDS:
-            i.set_volume(self.game_info[c.SOUND_VOLUME])
-
+        
     def setupBackground(self):
         frame_rect = (80, 0, 800, 600)
         # 1、形参中加单星号，即f(*x)则表示x为元组，所有对x的操作都应将x视为元组类型进行。
@@ -118,9 +111,6 @@ class Menu(tool.State):
         self.adventure_timer = self.adventure_start = self.current_time
         self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
         # 播放进入音效
-        pg.mixer.music.stop()
-        c.SOUND_EVILLAUGH.play()
-        c.SOUND_LOSE.play()
 
     # 按到小游戏
     def respondLittleGameClick(self):
@@ -218,8 +208,7 @@ class Menu(tool.State):
 
     def respondOptionButtonClick(self):
         self.option_button_clicked = True
-        # 播放点击音效
-        c.SOUND_BUTTON_CLICK.play()
+
 
     def showCurrentVolumeImage(self, surface:pg.Surface):
         # 由于音量可变，因此这一内容不能在一开始就结束加载，而应当不断刷新不断显示
@@ -262,7 +251,7 @@ class Menu(tool.State):
                 # 返回
                 if self.inArea(self.return_button_rect, *mouse_pos):
                     self.option_button_clicked = False
-                    c.SOUND_BUTTON_CLICK.play()
+                    
                 # 音量+
                 elif self.inArea(self.sound_volume_plus_button_rect, *mouse_pos):
                     self.game_info[c.SOUND_VOLUME] = round(min(self.game_info[c.SOUND_VOLUME] + 0.05, 1), 2)
@@ -270,7 +259,7 @@ class Menu(tool.State):
                     pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
                     for i in c.SOUNDS:
                         i.set_volume(self.game_info[c.SOUND_VOLUME])
-                    c.SOUND_BUTTON_CLICK.play()
+                    
                     self.saveUserData()
                 # 音量-
                 elif self.inArea(self.sound_volume_minus_button_rect, *mouse_pos):
@@ -279,7 +268,7 @@ class Menu(tool.State):
                     pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
                     for i in c.SOUNDS:
                         i.set_volume(self.game_info[c.SOUND_VOLUME])
-                    c.SOUND_BUTTON_CLICK.play()
+                    
                     self.saveUserData()
         # 没有点到前两者时常规行检测所有按钮的点击和高亮
         else:
