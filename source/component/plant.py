@@ -29,9 +29,6 @@ class Car(pg.sprite.Sprite):
     def setWalk(self):
         if self.state == c.IDLE:
             self.state = c.WALK
-            # 播放音效
-            c.SOUND_CAR_WALKING.play()
-
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
@@ -120,12 +117,7 @@ class Bullet(pg.sprite.Sprite):
         self.image = self.frames[0]
         self.mask = pg.mask.from_surface(self.image)
 
-        # 播放子弹爆炸音效
-        if self.name == c.BULLET_FIREBALL:
-            c.SOUND_FIREPEA_EXPLODE.play()
-        else:
-            c.SOUND_BULLET_EXPLODE.play()
-
+        
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
@@ -416,8 +408,7 @@ class PeaShooter(Plant):
             self.bullet_group.add(Bullet(self.rect.right - 15, self.rect.y, self.rect.y,
                                          c.BULLET_PEA, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
+          
 
     def setAttack(self):
         self.state = c.ATTACK
@@ -440,14 +431,12 @@ class RepeaterPea(Plant):
             self.bullet_group.add(Bullet(self.rect.right - 15, self.rect.y, self.rect.y,
                                          c.BULLET_PEA, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
+            
         elif self.first_shot and (self.current_time - self.shoot_timer) > 100:
             self.first_shot = False
             self.bullet_group.add(Bullet(self.rect.right - 15, self.rect.y, self.rect.y,
                                          c.BULLET_PEA, c.BULLET_DAMAGE_NORMAL, effect=None))
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
+            
 
     def setAttack(self):
         self.state = c.ATTACK
@@ -482,8 +471,7 @@ class ThreePeaShooter(Plant):
                 self.bullet_groups[tmp_y].add(Bullet(self.rect.right  - 15, self.rect.y, dest_y,
                                                      c.BULLET_PEA, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
+            
 
     def setAttack(self):
         self.state = c.ATTACK
@@ -502,10 +490,7 @@ class SnowPeaShooter(Plant):
             self.bullet_group.add(Bullet(self.rect.right  - 15, self.rect.y, self.rect.y,
                                          c.BULLET_PEA_ICE, c.BULLET_DAMAGE_NORMAL, effect=c.BULLET_EFFECT_ICE))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
-            # 播放冰子弹音效
-            c.SOUND_SNOWPEA_SPARKLES.play()
+    
 
     def setAttack(self):
         self.state = c.ATTACK
@@ -567,8 +552,7 @@ class CherryBomb(Plant):
         if self.start_boom:
             if self.bomb_timer == 0:
                 self.bomb_timer = self.current_time
-                # 播放爆炸音效
-                c.SOUND_BOMB.play()
+                #
             elif (self.current_time - self.bomb_timer) > 500:
                 self.health = 0
         else:
@@ -650,9 +634,7 @@ class Chomper(Plant):
             # 对活着的僵尸才需要吞下去消化
             if self.attack_zombie.alive():
                 if not self.should_diggest:
-                    # 播放吞的音效 由于一帧在这个循环中执行了若干次，可能被设置播放若干次导致声音重叠，所以用if保护
-                    # 在尚未检测到需要消化时播放音效
-                    c.SOUND_BIGCHOMP.play()
+                    
                     self.should_diggest = True
                     self.attack_zombie.kill()
         if (self.frame_index + 1) == self.frame_num:
@@ -697,8 +679,7 @@ class PuffShroom(Plant):
             self.bullet_group.add(Bullet(self.rect.right, self.rect.y + 10, self.rect.y + 10,
                                          c.BULLET_MUSHROOM, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放音效
-            c.SOUND_PUFF.play()
+           
 
     def canAttack(self, zombie):
         if (zombie.name == c.SNORKELZOMBIE) and (zombie.frames == zombie.swim_frames):
@@ -763,8 +744,7 @@ class PotatoMine(Plant):
     def attacking(self):
         if self.bomb_timer == 0:
             self.bomb_timer = self.current_time
-            # 播放音效
-            c.SOUND_POTATOMINE.play()
+            #
             self.changeFrames(self.explode_frames)
             self.start_boom = True
         elif (self.current_time - self.bomb_timer) > 500:
@@ -824,11 +804,9 @@ class Squash(Plant):
                 self.health = 0 # 避免僵尸在原位啃食
                 self.map_plant_set.remove(c.SQUASH)
                 self.kill()
-                # 播放碾压音效
-                c.SOUND_SQUASHING.play()
+                
         elif self.aim_timer == 0:
-            # 锁定目标时播放音效
-            c.SOUND_SQUASH_HMM.play()
+            
             self.aim_timer = self.current_time
             self.changeFrames(self.aim_frames)
         elif (self.current_time - self.aim_timer) > 1000:
@@ -885,8 +863,7 @@ class Spikeweed(Plant):
                         zombie.setDamage(20, damage_type=c.ZOMBIE_COMMON_DAMAGE)
             if killSelf:
                 self.health = 0
-            # 播放攻击音效，同子弹打击
-            c.SOUND_BULLET_EXPLODE.play()
+            
 
 
 class Jalapeno(Plant):
@@ -916,8 +893,7 @@ class Jalapeno(Plant):
         if self.start_boom:
             if (self.current_time - self.animate_timer) > 100:
                 if self.frame_index == 1:
-                    # 播放爆炸音效
-                    c.SOUND_BOMB.play()
+                    pass
                 self.frame_index += 1
                 if self.frame_index >= self.frame_num:
                     self.health = 0
@@ -993,8 +969,7 @@ class ScaredyShroom(Plant):
             self.bullet_group.add(Bullet(self.rect.right - 15, self.rect.y + 40, self.rect.y + 40,
                                          c.BULLET_MUSHROOM, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放音效
-            c.SOUND_PUFF.play()
+            
 
 
 class SunShroom(Plant):
@@ -1030,8 +1005,7 @@ class SunShroom(Plant):
             elif (self.current_time - self.change_timer) > 100000:
                 self.changeFrames(self.big_frames)
                 self.is_big = True
-                # 播放长大音效
-                c.SOUND_PLANT_GROW.play()
+                
         if self.sun_timer == 0:
             self.sun_timer = self.current_time - (c.FLOWER_SUN_INTERVAL - 6000)
         elif (self.current_time - self.sun_timer) > c.FLOWER_SUN_INTERVAL:
@@ -1256,8 +1230,7 @@ class RedWallNutBowling(Plant):
             self.start_boom = True
             self.explode_timer = self.current_time
             self.changeFrames(self.explode_frames)
-            # 播放爆炸音效
-            c.SOUND_BOMB.play()
+            
         elif (self.current_time - self.explode_timer) > 500:
             self.health = 0
 
@@ -1359,8 +1332,7 @@ class StarFruit(Plant):
                                                 c.BULLET_DAMAGE_NORMAL, c.STAR_FORWARD_UP,
                                                 self.level))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_SHOOT.play()
+            #
 
     def setAttack(self):
         self.state = c.ATTACK
@@ -1391,8 +1363,7 @@ class CoffeeBean(Plant):
                                 plant.state = c.IDLE
                                 plant.setIdle()
                                 plant.changeFrames(plant.idle_frames)
-                # 播放唤醒音效
-                c.SOUND_MUSHROOM_WAKEUP.play()
+                
                 self.map_content[c.MAP_PLANT].remove(self.name)
                 self.kill()
                 self.frame_index = self.frame_num - 1
@@ -1436,8 +1407,7 @@ class SeaShroom(Plant):
             self.bullet_group.add(Bullet(self.rect.right, self.rect.y + 50, self.rect.y + 50,
                                          c.BULLET_SEASHROOM, c.BULLET_DAMAGE_NORMAL, effect=None))
             self.shoot_timer = self.current_time
-            # 播放发射音效
-            c.SOUND_PUFF.play()
+            
 
     def canAttack(self, zombie):
         if (zombie.name == c.SNORKELZOMBIE) and (zombie.frames == zombie.swim_frames):
@@ -1519,8 +1489,7 @@ class TangleKlep(Plant):
             self.splashing = True
             self.changeFrames(self.splash_frames)
             self.attack_zombie.kill()
-            # 播放拖拽音效
-            c.SOUND_TANGLE_KELP_DRAG.play()
+            
         # 这里必须用elif排除尚未进入splash阶段，以免误触
         elif (self.frame_index + 1) >= self.frame_num:
             self.health = 0
@@ -1571,8 +1540,7 @@ class DoomShroom(Plant):
             if self.frame_index == 1:
                 self.rect.x -= 80
                 self.rect.y += 30
-                # 播放爆炸音效
-                c.SOUND_DOOMSHROOM.play()
+                
             if (self.current_time - self.animate_timer) > self.animate_interval:
                 self.frame_index += 1
             if self.frame_index >= self.frame_num:
@@ -1683,8 +1651,7 @@ class GraveBuster(Plant):
         self.plant_group = plant_group
         self.animate_interval = 100
         self.attack_check = c.CHECK_ATTACK_NEVER
-        # 播放吞噬音效
-        c.SOUND_GRAVEBUSTER_CHOMP.play()
+        
 
     def animation(self):
         if (self.current_time - self.animate_timer) > self.animate_interval:
@@ -1763,8 +1730,7 @@ class FumeShroom(Plant):
                     target_zombie.setDamage(c.BULLET_DAMAGE_NORMAL, damage_type=c.ZOMBIE_RANGE_DAMAGE)
             self.shoot_timer = self.current_time
             self.show_attack_frames = True
-            # 播放发射音效
-            c.SOUND_FUME.play()
+           
         
     def animation(self):
         if (self.current_time - self.animate_timer) > self.animate_interval:

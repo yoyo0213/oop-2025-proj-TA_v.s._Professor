@@ -659,60 +659,6 @@ for _part1 in (DUCKY_TUBE_ZOMBIE, CONEHEAD_DUCKY_TUBE_ZOMBIE, BUCKETHEAD_DUCKY_T
         ZOMBIE_RECT[f"{_part1}{_part2}"] = {"x":55, "width":105}
 
 
-# 音效
-def _getSound(filename):
-    return pg.mixer.Sound(os.path.join(os.path.dirname(os.path.dirname(__file__)) ,"resources", "sound", filename))
-# 所有音效的元组，用一波海象算子表达，免得要维护两个
-SOUNDS = (  # 程序交互等
-            SOUND_TAPPING_CARD              := _getSound("tap.ogg"),
-            SOUND_HELP_SCREEN               := _getSound("helpScreen.ogg"),
-            # 植物
-            SOUND_FIREPEA_EXPLODE           := _getSound("firepea.ogg"),
-            SOUND_BULLET_EXPLODE            := _getSound("bulletExplode.ogg"),
-            SOUND_SHOOT                     := _getSound("shoot.ogg"),
-            SOUND_SNOWPEA_SPARKLES          := _getSound("snowPeaSparkles.ogg"),
-            SOUND_BOMB                      := _getSound("bomb.ogg"),
-            SOUND_BIGCHOMP                  := _getSound("bigchomp.ogg"),
-            SOUND_PUFF                      := _getSound("puff.ogg"),
-            SOUND_POTATOMINE                := _getSound("potatomine.ogg"),
-            SOUND_SQUASHING                 := _getSound("squashing.ogg"),
-            SOUND_SQUASH_HMM                := _getSound("squashHmm.ogg"),
-            SOUND_PLANT_GROW                := _getSound("plantGrow.ogg"),
-            SOUND_MUSHROOM_WAKEUP           := _getSound("mushroomWakeup.ogg"),
-            SOUND_TANGLE_KELP_DRAG          := _getSound("tangleKelpDrag.ogg"),
-            SOUND_DOOMSHROOM                := _getSound("doomshroom.ogg"),
-            SOUND_GRAVEBUSTER_CHOMP         := _getSound("gravebusterchomp.ogg"),
-            SOUND_FUME                      := _getSound("fume.ogg"),
-            # 僵尸
-            SOUND_ZOMBIE_ENTERING_WATER     := _getSound("zombieEnteringWater.ogg"),
-            SOUND_ZOMBIE_ATTACKING          := _getSound("zombieAttack.ogg"),
-            SOUND_FREEZE                    := _getSound("freeze.ogg"),
-            SOUND_HYPNOED                   := _getSound("hypnoed.ogg"),
-            SOUND_NEWSPAPER_RIP             := _getSound("newspaperRip.ogg"),
-            SOUND_NEWSPAPER_ZOMBIE_ANGRY    := _getSound("newspaperZombieAngry.ogg"),
-            SOUND_POLEVAULT_JUMP            := _getSound("polevaultjump.ogg"),
-            SOUND_ZOMBONI                   := _getSound("zomboni.ogg"),
-            SOUND_ZOMBONI_EXPLOSION         := _getSound("zomboniExplosion.ogg"),
-            # 关卡中
-            SOUND_CAR_WALKING               := _getSound("carWalking.ogg"),
-            SOUND_ZOMBIE_COMING             := _getSound("zombieComing.ogg"),
-            SOUND_ZOMBIE_VOICE              := _getSound("zombieVoice.ogg"),
-            SOUND_HUGE_WAVE_APPROCHING      := _getSound("hugeWaveApproching.ogg"),
-            SOUND_BUTTON_CLICK              := _getSound("buttonclick.ogg"),
-            SOUND_COLLECT_SUN               := _getSound("collectSun.ogg"),
-            SOUND_CLICK_CARD                := _getSound("clickCard.ogg"),
-            SOUND_SHOVEL                    := _getSound("shovel.ogg"),
-            SOUND_PLANT                     := _getSound("plant.ogg"),
-            SOUND_BOWLING_IMPACT            := _getSound("bowlingimpact.ogg"),
-            SOUND_PLANT_DIE                 := _getSound("plantDie.ogg"),
-            SOUND_EVILLAUGH                 := _getSound("evillaugh.ogg"),
-            SOUND_LOSE                      := _getSound("lose.ogg"),
-            SOUND_WIN                       := _getSound("win.ogg"),
-            SOUND_SCREAM                    := _getSound("scream.ogg"),
-            SOUND_CANNOT_CHOOSE_WARNING     := _getSound("cannotChooseWarning.ogg"),
-            SOUND_FINAL_FANFARE             := _getSound("finalfanfare.ogg"),
-)
-
 # 记录本地存储文件初始值
 INIT_USERDATA = {   
                 LEVEL_NUM:              1,
