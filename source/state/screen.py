@@ -3,6 +3,7 @@ import pygame as pg
 from abc import abstractmethod
 from .. import tool
 from .. import constants as c
+from . import scoreborard as sb
 
 class Screen(tool.State):
     def __init__(self):
@@ -92,7 +93,7 @@ class GameLoseScreen(Screen):
         pg.display.set_caption("pypvz: 战斗失败！")
         # 停止播放原来关卡中的音乐
         pg.mixer.music.stop()
-
+""" award screen abandoned
 class AwardScreen(tool.State):
     def __init__(self):
         tool.State.__init__(self)
@@ -213,7 +214,7 @@ class AwardScreen(tool.State):
                 if self.inArea(self.next_button_image_rect, *mouse_pos):
                     self.next = c.LEVEL
                     self.done = True
-
+"""
 class HelpScreen(tool.State):
     def __init__(self):
         tool.State.__init__(self)
@@ -257,3 +258,6 @@ class HelpScreen(tool.State):
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 self.next = c.MAIN_MENU
                 self.done = True
+
+class ScoreboardScreen(tool.State):
+    pass

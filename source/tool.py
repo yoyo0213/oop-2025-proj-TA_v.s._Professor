@@ -7,31 +7,27 @@ from pygame.locals import *
 from . import constants as c
 logger = logging.getLogger("main")
 
-# 状态机 抽象基类
+# state base class (abstract)
 class State():
     def __init__(self):
         self.start_time = 0
         self.current_time = 0
-        self.done = False   # false 代表未做完
-        self.next = None    # 表示这个状态退出后要转到的下一个状态
-        self.persist = {}   # 在状态间转换时需要传递的数据
+        self.done = False   # not dome
+        self.next = None    # next state name
+        self.persist = {}   # imformation needed to persist between states
 
-    # 当从其他状态进入这个状态时，需要进行的初始化操作
-    @abstractmethod
+    # initialization operation
+    @abstractmethod #need to be defined in subclass
     def startup(self, current_time:int, persist:dict):
-        # 前面加了@abstractmethod表示抽象基类中必须要重新定义的method（method是对象和函数的结合）
         pass
-    # 当从这个状态退出时，需要进行的清除操作
     def cleanup(self):
         self.done = False
         return self.persist
-    # 在这个状态运行时进行的更新操作
     @abstractmethod
     def update(self, surface:pg.Surface, keys, current_time:int):
-        # 前面加了@abstractmethod表示抽象基类中必须要重新定义的method
         pass
 
-    # 工具：范围判断函数，用于判断点击
+    # tools: check if a position of mouse click  is in a rectangle
     def inArea(self, rect:pg.Rect, x:int, y:int):
         if (rect.x <= x <= rect.right and
             rect.y <= y <= rect.bottom):
@@ -39,7 +35,8 @@ class State():
         else:
             return False
 
-    # 工具：用户数据保存函数
+    # tools: save user data -> abando
+    """
     def saveUserData(self):
         with open(c.USERDATA_PATH, "w", encoding="utf-8") as f:
             userdata = {}
@@ -48,8 +45,8 @@ class State():
                     userdata[i] = self.game_info[i]
             data_to_save = json.dumps(userdata, sort_keys=True, indent=4)
             f.write(data_to_save)
-
-# 进行游戏控制 循环 事件响应
+"""
+# main control 
 class Control():
     def __init__(self):
         self.screen = pg.display.get_surface()
@@ -62,6 +59,7 @@ class Control():
         self.state_dict = {}
         self.state_name = None
         self.state = None
+        """ upload user data -> abandon this part
         try:
             # 存在存档即导入
             # 先自动修复读写权限(Python权限规则和Unix不一样，420表示unix的644，Windows自动忽略不支持项)
@@ -87,12 +85,14 @@ class Control():
                 with open(c.USERDATA_PATH, "w", encoding="utf-8") as f:
                     savedata = json.dumps(self.game_info, sort_keys=True, indent=4)
                     f.write(savedata)
-        # 存档内不包含即时游戏时间信息，需要新建
+                    """
+        # establish game_info
+        self.game_info = c.INIT_USERDATA.copy()
         self.game_info[c.CURRENT_TIME] = 0
 
-        # 50为目前的基础帧率，乘以倍率即是游戏帧率
+        # setup fps
         self.fps = 50 * self.game_info[c.GAME_RATE]
-
+    """ user data setup function -- abandoned
     def setupUserData(self):
         if not os.path.exists(os.path.dirname(c.USERDATA_PATH)):
             os.makedirs(os.path.dirname(c.USERDATA_PATH))
@@ -100,7 +100,7 @@ class Control():
             savedata = json.dumps(c.INIT_USERDATA, sort_keys=True, indent=4)
             f.write(savedata)
         self.game_info = c.INIT_USERDATA.copy() # 内部全是不可变对象，浅拷贝即可
-
+    """
     def setup_states(self, state_dict:dict, start_state):
         self.state_dict = state_dict
         self.state_name = start_state
@@ -110,7 +110,6 @@ class Control():
     def update(self):
         # 自 pygame_init() 调用以来的毫秒数 * 游戏速度倍率，即游戏时间
         self.current_time = pg.time.get_ticks() * self.game_info[c.GAME_RATE]
-
         if self.state.done:
             self.flip_state()
             
@@ -119,7 +118,7 @@ class Control():
         self.mouse_click[0] = False
         self.mouse_click[1] = False
 
-    # 状态转移
+    # changing state
     def flip_state(self):
         if self.state.next == c.EXIT:
             pg.quit()
@@ -144,7 +143,8 @@ class Control():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 self.mouse_pos = pg.mouse.get_pos()
                 self.mouse_click[0], _, self.mouse_click[1] = pg.mouse.get_pressed()
-                # self.mouse_click[0]表示左键，self.mouse_click[1]表示右键
+                # self.mouse_click[0]->left
+                # self.mouse_click[1]->right
                 #print(f"click position: ({self.mouse_pos[0]:3}, {self.mouse_pos[1]:3}) left and right click status: {self.mouse_click}")
 
 
@@ -155,6 +155,9 @@ class Control():
             pg.display.update()
             self.clock.tick(self.fps)
 
+
+"""------------------------------------------------------------------------"""
+#below are some tools to load images
 def get_image(  sheet:pg.Surface, x:int, y:int, width:int, height:int,
                 colorkey:tuple[int]=c.BLACK, scale:int=1) -> pg.Surface:
         # 不保留alpha通道的图片导入

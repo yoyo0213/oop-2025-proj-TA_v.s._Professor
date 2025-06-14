@@ -89,23 +89,17 @@ class Menu(tool.State):
         self.option_button_clicked = False
 
     def checkHilight(self, x:int, y:int):
-        # 高亮冒险模式按钮
         if self.inArea(self.adventure_rect, x, y):
             self.adventure_highlight_time = self.current_time
-        # 高亮小游戏按钮
         elif self.inArea(self.littleGame_rect, x, y):
             self.littleGame_highlight_time = self.current_time
-        # 高亮退出按钮
         elif self.inArea(self.exit_rect, x, y):
             self.exit_highlight_time = self.current_time
-        # 高亮选项按钮
         elif self.inArea(self.option_button_rect, x, y):
             self.option_button_highlight_time = self.current_time
-        # 高亮帮助按钮
         elif self.inArea(self.help_rect, x, y):
             self.help_hilight_time = self.current_time
 
-        # 处理按钮高亮情况
         self.adventure_image = self.chooseHilightImage(self.adventure_highlight_time, self.adventure_frames)
         self.exit_image = self.chooseHilightImage(self.exit_highlight_time, self.exit_frames)
         self.option_button_image = self.chooseHilightImage(self.option_button_highlight_time, self.option_button_frames)
@@ -122,7 +116,7 @@ class Menu(tool.State):
     def respondAdventureClick(self):
         self.adventure_clicked = True
         self.adventure_timer = self.adventure_start = self.current_time
-        self.persist[c.GAME_MODE] = c.MODE_ADVENTURE
+        self.persist[c.GAME_MODE] = c.MODE_LITTLEGAME
         # 播放进入音效
         pg.mixer.music.stop()
         c.SOUND_EVILLAUGH.play()
@@ -130,10 +124,8 @@ class Menu(tool.State):
 
     # 按到小游戏
     def respondLittleGameClick(self):
-        self.done = True
-        self.persist[c.GAME_MODE] = c.MODE_SURVIVAL
-        # 播放点击音效
-        c.SOUND_BUTTON_CLICK.play()
+        self.done = False
+
 
     # 点击到退出按钮，修改转态的done属性
     def respondExitClick(self):
