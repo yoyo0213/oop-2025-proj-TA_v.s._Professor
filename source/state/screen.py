@@ -258,6 +258,70 @@ class HelpScreen(tool.State):
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 self.next = c.MAIN_MENU
                 self.done = True
+class EndScreen(tool.State):
+    def __init__(self):
+        super().__init__()
+    def startup(self,current_time,persist):
+        self.start_time =current_time
+        self.persist = persist
+        self.game_info =persist
+    def setupImage(self):
+        pass
+    def update(self):
+        pass
+class ScoreScreen(tool.State):
+    def __init__(self):
+        tool.State.__init__(self)
 
-class ScoreboardScreen(tool.State):
-    pass
+    def startup(self, current_time, persist):
+        self.start_time = current_time
+        self.persist = persist
+        self.game_info = persist
+        self.setupImage()
+        pg.display.set_caption("pypvz: 排行榜")
+        pg.mixer.music.stop()
+        #c.SOUND_SCORE_SCREEN.play()
+
+        # 載入排行榜資料
+        self.scoreboard = sb.Scoreboard()
+
+    def setupImage(self):
+        # 主體背景
+        frame_rect = (-100, -50, 800, 600)
+        self.image = tool.get_image(tool.GFX[c.GAME_LOSE_IMAGE], *frame_rect, colorkey=(0, 255, 255))
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+
+        # 主選單按鈕
+        button_rect = (0, 0, 111, 26)
+        self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *button_rect)
+        self.main_menu_button_image_rect = self.main_menu_button_image.get_rect()
+        self.main_menu_button_image_rect.x = 343
+        self.main_menu_button_image_rect.y = 500
+        font = pg.font.Font(c.FONT_PATH, 18)
+        main_menu_text = font.render("返回", True, c.NAVYBLUE)
+        main_menu_text_rect = main_menu_text.get_rect()
+        main_menu_text_rect.x = 29
+        self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
+        self.image.blit(self.main_menu_button_image, self.main_menu_button_image_rect)
+
+    def update(self, surface, current_time, mouse_pos, mouse_click):
+        surface.fill(c.BLACK)
+        surface.blit(self.image, self.rect)
+
+        # 顯示排行榜資料
+        font = pg.font.Font(c.FONT_PATH, 24)
+        scores = self.scoreboard.get_top_scores()
+
+        for i, entry in enumerate(scores):
+            text = f"{i+1}. {entry['name']} - {entry['score']} 分 - {entry['time']}"
+            text_surface = font.render(text, True, c.WHITE)
+            surface.blit(text_surface, (100, 120 + i * 30))
+
+        # 檢查點擊主選單
+        if mouse_pos:
+            if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
+                if mouse_click:
+                    self.next = c.SCOREBOARD
+                    self.done = True
