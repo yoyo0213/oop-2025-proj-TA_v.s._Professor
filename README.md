@@ -4,16 +4,23 @@ We’ve customized it with the following enhancements:
 
  1. TA Character Customization:
  
-    Replace some plant/zombie characters with TA-themed versions, complete with new visuals and stats.
+    Replace some zombie characters with TA-themed versions.
+    *Special thanks to our TA for the cameo appearance!*
 
- 2. Custom Movement Patterns:
+ 2. Survival game mode implementation:
  
-    Add varied movement behaviors to increase gameplay challenge and variety.
+    Instead of the original "Nut Bowling" level, we implemented a survival mode where players face endless waves of zombies until defeat. Difficulty gradually increases over time.
 
- 3. New Special Tools & Characters:
+ 3. Full user interface flow:
  
-    Introduce features like “Freeze Bombs” and other strategic tools to enrich gameplay.
+    The game now features a fully integrated flow: start screen → gameplay → leaderboard → return to start
 
- 4. Adjustable Difficulty Levels:
+ 4. Leaderboard System:
  
-    Dynamically tweak zombie spawn rates, HP, types, etc., via configurable level parameters for better balance and engagement.
+    A local leaderboard records and ranks player performance based on two metrics:
+    Total survival time and total kill points of zombies eliminated (different zombies gains different kill points).
+
+
+
+
+
