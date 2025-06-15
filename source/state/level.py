@@ -12,12 +12,13 @@ class Level(tool.State):
         tool.State.__init__(self)
         self._logged_reset= False
         self._logged_first_wave = False
-        self.toal_play_time=0
+        self.start_time =0
+        self.total_time =0
     def startup(self, current_time, persist):
         self.game_info = persist
         self.persist = self.game_info
         self.game_info[c.CURRENT_TIME] = current_time
-
+        self.start_time = current_time
         # 暂停状态
         self.pause = False
         self.pause_time = 0
@@ -261,13 +262,7 @@ class Level(tool.State):
             self.choose(mouse_pos, mouse_click)
         elif self.state == c.PLAY:
             self.play(mouse_pos, mouse_click)
-        if not hasattr(self, 'last_update_time'):
-            self.last_update_time = self.current_time
-        delta = current_time -self.last_update_time
-        if not self.pause and not self.show_game_menu:
-            self.toal_play_time += delta
 
-        self.last_update_time = current_time
         self.draw(surface)
 
     def gameTime(self, current_time):
@@ -457,30 +452,7 @@ class Level(tool.State):
         self.mainMenu_button_rect.x = 299
         self.mainMenu_button_rect.y = 372
 
-        # 音量+、音量-
-        frame_rect = (0, 0, 39, 41)
-        font = pg.font.Font(c.FONT_PATH, 35)
-        font.bold = True
-        # 音量+
-        self.sound_volume_plus_button = tool.get_image_alpha(tool.GFX[c.SOUND_VOLUME_BUTTON], *frame_rect, c.BLACK)
-        sign = font.render("+", True, c.YELLOWGREEN)
-        sign_rect = sign.get_rect()
-        sign_rect.x = 8
-        sign_rect.y = -4
-        self.sound_volume_plus_button.blit(sign, sign_rect)
-        self.sound_volume_plus_button_rect = self.sound_volume_plus_button.get_rect()
-        self.sound_volume_plus_button_rect.x = 500
-        # 音量-
-        self.sound_volume_minus_button = tool.get_image_alpha(tool.GFX[c.SOUND_VOLUME_BUTTON], *frame_rect, c.BLACK)
-        sign = font.render("-", True, c.YELLOWGREEN)
-        sign_rect = sign.get_rect()
-        sign_rect.x = 12
-        sign_rect.y = -8
-        self.sound_volume_minus_button.blit(sign, sign_rect)
-        self.sound_volume_minus_button_rect = self.sound_volume_minus_button.get_rect()
-        self.sound_volume_minus_button_rect.x = 450
-        # 音量+、-应当处于同一高度
-        self.sound_volume_minus_button_rect.y = self.sound_volume_plus_button_rect.y = 250
+       
 
     def pauseAndCheckMenuOptions(self, mouse_pos, mouse_click):
         # 设置暂停状态
@@ -493,9 +465,6 @@ class Level(tool.State):
                 # 终止暂停，停止显示菜单
                 self.pause = False
                 self.show_game_menu = False
-                # 继续播放音乐
-                pg.mixer.music.unpause()
-                # 播放点击音效c.SOUND_BUTTON_CLICK.play()
                 
             # 重新开始键
             elif self.inArea(self.restart_button_rect, *mouse_pos):
@@ -509,27 +478,7 @@ class Level(tool.State):
                 self.next = c.MAIN_MENU
                 self.persist = self.game_info
                 self.persist[c.CURRENT_TIME] = 0
-                # 播放点击音效
                 
-            # 音量+
-            elif self.inArea(self.sound_volume_plus_button_rect, *mouse_pos):
-                self.game_info[c.SOUND_VOLUME] = round(min(self.game_info[c.SOUND_VOLUME] + 0.05, 1), 2)
-                # 一般不会有人想把音乐和音效分开设置，故pg.mixer.Sound.set_volume()和pg.mixer.music.set_volume()需要一起用
-                pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-                for i in c.SOUNDS:
-                    i.set_volume(self.game_info[c.SOUND_VOLUME])
-                
-                # 将音量信息存档
-                self.saveUserData()
-            elif self.inArea(self.sound_volume_minus_button_rect, *mouse_pos):
-                self.game_info[c.SOUND_VOLUME] = round(max(self.game_info[c.SOUND_VOLUME] - 0.05, 0), 2)
-                # 一般不会有人想把音乐和音效分开设置，故pg.mixer.Sound.set_volume()和pg.mixer.music.set_volume()需要一起用
-                pg.mixer.music.set_volume(self.game_info[c.SOUND_VOLUME])
-                for i in c.SOUNDS:
-                    i.set_volume(self.game_info[c.SOUND_VOLUME])
-                
-                # 将音量信息存档
-                self.saveUserData()
 
 
     # 一大波僵尸来袭图片显示
@@ -926,7 +875,6 @@ class Level(tool.State):
         self.hint_image = None
         self.hint_plant = False
 
-    # 移除小铲子
     def removeMouseImagePlus(self):
         self.drag_shovel = False
         self.shovel_rect.x = self.shovel_positon[0]
@@ -1144,7 +1092,6 @@ class Level(tool.State):
                         zombie.setBoomDie()
 
     def freezeZombies(self, plant):
-        # 播放冻结音效
 
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:
@@ -1323,7 +1270,7 @@ class Level(tool.State):
                     self.checkPlant(plant, i)
                 if plant.health <= 0:
                     self.killPlant(plant)
-
+    """
     def checkVictory(self):
         if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
             return False
@@ -1339,41 +1286,22 @@ class Level(tool.State):
             for i in range(self.map_y_len):
                 if len(self.zombie_groups[i]) > 0:
                     return False
-        return True
+        return True"""
 
     def checkLose(self):
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:
                 if zombie.rect.right < -20 and (not zombie.losthead) and (zombie.state != c.DIE):
-                    self.next = c.MODE_LEADERBOARD   # 你的排行榜狀態常數
+                    self.next = c.MODE_LEADERBOARD   
                     self.done = True
                     return True
         return False
 
     def checkGameState(self):
-        if self.checkVictory():
-            if self.game_info[c.GAME_MODE] == c.MODE_ADVENTURE:
-                self.game_info[c.LEVEL_NUM] += 1
-                if self.game_info[c.LEVEL_NUM] >= map.TOTAL_LEVEL:
-                    self.game_info[c.LEVEL_COMPLETIONS] += 1
-                    self.game_info[c.LEVEL_NUM] = 1
-                    self.next = c.AWARD_SCREEN
-                else:
-                    self.next = c.GAME_VICTORY
-            elif self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
-                self.game_info[c.LITTLEGAME_NUM] += 1
-                if self.game_info[c.LITTLEGAME_NUM] >= map.TOTAL_LITTLE_GAME:
-                    self.game_info[c.LITTLEGAME_COMPLETIONS] += 1
-                    self.game_info[c.LITTLEGAME_NUM] = 1
-                    self.next = c.AWARD_SCREEN
-
-                else:
-                    self.next = c.GAME_VICTORY
-                    
-            self.done = True
-            self.saveUserData()
-        elif self.checkLose():
+        
+        if self.checkLose():
             self.next = c.ENDSCREEN
+            self.game_info[c.LEVEL_NUM] = self.current_time-self.start_time #記錄總遊玩時間
             self.done = True
 
 
@@ -1451,17 +1379,6 @@ class Level(tool.State):
         surface.blit(self.return_button, self.return_button_rect)
         surface.blit(self.restart_button, self.restart_button_rect)
         surface.blit(self.mainMenu_button, self.mainMenu_button_rect)
-        surface.blit(self.sound_volume_minus_button, self.sound_volume_minus_button_rect)
-        surface.blit(self.sound_volume_plus_button, self.sound_volume_plus_button_rect)
-        
-        # 显示当前音量
-        # 由于音量可变，因此这一内容不能在一开始就结束加载，而应当不断刷新不断显示
-        font = pg.font.Font(c.FONT_PATH, 30)
-        volume_tips = font.render(f"音量：{round(self.game_info[c.SOUND_VOLUME]*100):3}%", True, c.LIGHTGRAY)
-        volume_tips_rect = volume_tips.get_rect()
-        volume_tips_rect.x = 275
-        volume_tips_rect.y = 247
-        surface.blit(volume_tips, volume_tips_rect)
 
     def draw(self, surface):
         self.level.blit(self.background, self.viewport, self.viewport)
@@ -1506,3 +1423,15 @@ class Level(tool.State):
                 self.showLevelProgress(surface)
                 if self.current_time - self.show_hugewave_approching_time <= 2000:
                     surface.blit(self.huge_wave_approching_image, self.huge_wave_approching_image_rect)
+
+            # 顯示遊戲進行時間在左下角
+            elapsed_seconds = (self.current_time-self.start_time) // 1000
+            minutes = elapsed_seconds // 60
+            seconds = elapsed_seconds % 60
+            time_str = f"{minutes:02d}:{seconds:02d}"
+            font = pg.font.Font(c.FONT_PATH, 20)
+            time_surf = font.render(f"{time_str}", True, c.RED)
+            time_rect = time_surf.get_rect()
+            time_rect.x = 50
+            time_rect.y = surface.get_height() - time_rect.height - 3
+            surface.blit(time_surf, time_rect)

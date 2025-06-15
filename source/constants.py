@@ -1,6 +1,6 @@
 import os
 import pygame as pg
-
+"""
 # 用户数据及日志存储路径
 if os.name == "nt": # Windows系统存储路径
     USERDATA_PATH = os.path.expandvars(os.path.join("%APPDATA%", "pypvz", "userdata.json"))
@@ -8,11 +8,9 @@ if os.name == "nt": # Windows系统存储路径
 else:   # 非Windows系统存储路径
     USERDATA_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "userdata.json"))
     USERLOG_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "run.log"))
-
+"""
 # images path
 PATH_IMG_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "graphics")
-# music path
-PATH_MUSIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources","music")
 # logo path
 ORIGINAL_LOGO = os.path.join(os.path.dirname(os.path.dirname(__file__)), "pypvz-exec-logo.png")
 # font path
