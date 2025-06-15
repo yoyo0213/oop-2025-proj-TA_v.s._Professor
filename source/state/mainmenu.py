@@ -18,10 +18,6 @@ class Menu(tool.State):
         
     def setupBackground(self):
         frame_rect = (80, 0, 800, 600)
-        # 1、形参中加单星号，即f(*x)则表示x为元组，所有对x的操作都应将x视为元组类型进行。
-        # 2、双星号同上，区别是x视为字典。
-        # 3、在变量前加单星号表示将元组（列表、集合）拆分为单个元素。
-        # 4、双星号同上，区别是目标为字典，字典前加单星号的话可以得到“键”。
         self.bg_image = tool.get_image(tool.GFX[c.MAIN_MENU_IMAGE], *frame_rect)
         self.bg_rect = self.bg_image.get_rect()
         self.bg_rect.x = 0
@@ -141,7 +137,7 @@ class Menu(tool.State):
         self.return_button_rect.y = 440
         font = pg.font.Font(c.FONT_PATH, 40)
         font.bold = True
-        text = font.render("返回游戏", True, c.YELLOWGREEN)
+        text = font.render("return", True, c.YELLOWGREEN)
         text_rect = text.get_rect()
         text_rect.x = 105
         text_rect.y = 18

@@ -2,27 +2,26 @@
 import json
 import os
 from datetime import datetime
+from .. import constants as c
 
-SCORE_FILE = "scores.json"
-MAX_ENTRIES = 10
 class Scoreboard:
     def __init__(self):
         self.scores = self.load_scores()
 
     def load_scores(self):
-        if os.path.exists(SCORE_FILE):
-            with open(SCORE_FILE, "r") as f:
+        if os.path.exists(c.SCORE_FILE):
+            with open(c.SCORE_FILE, "r") as f:
                 return json.load(f)
         return []
 
     def save_scores(self):
-        with open(SCORE_FILE, "w") as f:
+        with open(c.SCORE_FILE, "w") as f:
             json.dump(self.scores, f, indent=4)
 
     def add_score(self, name, score):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
         self.scores.append({"name": name,"survival time": score  ,"time": timestamp})
-        self.scores = sorted(self.scores, key=lambda x: x["survival time"], reverse=True)[:MAX_ENTRIES]
+        self.scores = sorted(self.scores, key=lambda x: x["survival time"], reverse=True)[:c.MAX_ENTRIES]
         self.save_scores()
 
     def get_top_scores(self):
