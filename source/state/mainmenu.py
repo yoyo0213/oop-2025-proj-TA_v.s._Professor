@@ -9,7 +9,7 @@ class Menu(tool.State):
         tool.State.__init__(self)
     
     def startup(self, current_time:int, persist):
-        self.next = c.LEVEL
+        self.next = c.PLAY
         self.persist = persist
         self.game_info = persist
         self.setupBackground()

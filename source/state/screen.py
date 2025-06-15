@@ -63,7 +63,7 @@ class Screen(tool.State):
             elif self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 self.next = c.MAIN_MENU
                 self.done = True
-
+"""
 class GameVictoryScreen(Screen):
     def __init__(self):
         Screen.__init__(self)
@@ -86,9 +86,7 @@ class GameLoseScreen(Screen):
         self.game_info = persist
         self.setupImage(self.image_name, (-118, -40, 800, 600), c.WHITE)
         pg.display.set_caption("pypvz: The game is over")
-        # 停止播放原来关卡中的音乐
-        pg.mixer.music.stop()
-
+"""
 class HelpScreen(tool.State):
     def __init__(self):
         tool.State.__init__(self)
@@ -235,6 +233,7 @@ class ScoreScreen(tool.State):
         self.image.blit(self.main_menu_button_image, self.main_menu_button_image_rect)
     def clear_scores(self):
         self.scoreboard.clear_scores()
+    
     def update(self, surface, current_time, mouse_pos, mouse_click):
         surface.fill(c.BLACK)
         surface.blit(self.image, self.rect)
