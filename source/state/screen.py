@@ -63,30 +63,7 @@ class Screen(tool.State):
             elif self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 self.next = c.MAIN_MENU
                 self.done = True
-"""
-class GameVictoryScreen(Screen):
-    def __init__(self):
-        Screen.__init__(self)
-        self.image_name = c.GAME_VICTORY_IMAGE
-    
-    def startup(self, current_time, persist):
-        self.start_time = current_time
-        self.persist = persist
-        self.game_info = persist
-        self.setupImage(self.image_name)
-        pg.display.set_caption("pypvz: 战斗胜利！")
-class GameLoseScreen(Screen):
-    def __init__(self):
-        Screen.__init__(self)
-        self.image_name = c.GAME_LOSE_IMAGE
-    
-    def startup(self, current_time, persist):
-        self.start_time = current_time
-        self.persist = persist
-        self.game_info = persist
-        self.setupImage(self.image_name, (-118, -40, 800, 600), c.WHITE)
-        pg.display.set_caption("pypvz: The game is over")
-"""
+
 class HelpScreen(tool.State):
     def __init__(self):
         tool.State.__init__(self)
@@ -114,7 +91,7 @@ class HelpScreen(tool.State):
         self.main_menu_button_image_rect.y = 500
         ### 主菜单按钮上的文字
         font = pg.font.Font(c.FONT_PATH, 18)
-        main_menu_text = font.render("主菜单", True, c.NAVYBLUE)
+        main_menu_text = font.render("Menu", True, c.NAVYBLUE)
         main_menu_text_rect = main_menu_text.get_rect()
         main_menu_text_rect.x = 29
         self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
@@ -218,15 +195,26 @@ class ScoreScreen(tool.State):
         self.rect.x = 0
         self.rect.y = 0
         # clear all data button
+        fram_rect = (0, 0, 111, 26)
+        self.clear_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *fram_rect)
+        self.clear_button_image_rect = self.clear_button_image.get_rect()
+        self.clear_button_image_rect.x = 400
+        self.clear_button_image_rect.y = 500
+        font = pg.font.Font(c.FONT_PATH, 16)
+        clear_button_text = font.render("clear all data", True, c.NAVYBLUE)
+        clear_button_text_rect = clear_button_text.get_rect()
+        clear_button_text_rect.x = 8
+        self.clear_button_image.blit(clear_button_text, clear_button_text_rect)
+        self.image.blit(self.clear_button_image, self.clear_button_image_rect)
 
         # go back to main menu 
         button_rect = (0, 0, 111, 26)
         self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *button_rect)
         self.main_menu_button_image_rect = self.main_menu_button_image.get_rect()
-        self.main_menu_button_image_rect.x = 343
+        self.main_menu_button_image_rect.x = 200
         self.main_menu_button_image_rect.y = 500
         font = pg.font.Font(c.FONT_PATH, 18)
-        main_menu_text = font.render("返回", True, c.NAVYBLUE)
+        main_menu_text = font.render("return", True, c.NAVYBLUE)
         main_menu_text_rect = main_menu_text.get_rect()
         main_menu_text_rect.x = 29
         self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
@@ -252,7 +240,7 @@ class ScoreScreen(tool.State):
                 if mouse_click:
                     self.next = c.MAIN_MENU
                     self.done = True
-            elif self.inArea(self.clear_button_rect, *mouse_pos):
+            elif self.inArea(self.clear_button_image_rect, *mouse_pos):
                 if mouse_click:
                     self.clear_scores()
 
