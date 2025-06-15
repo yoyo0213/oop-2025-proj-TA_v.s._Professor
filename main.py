@@ -18,9 +18,7 @@ def main():
     game = tool.Control()
 
     state_dict = {  c.MAIN_MENU:    mainmenu.Menu(),
-                        c.GAME_VICTORY: screen.GameVictoryScreen(),
-                        c.GAME_LOSE:    screen.GameLoseScreen(),
-                        c.LEVEL:        level.Level(),
+                        c.PLAY:        level.Level(),
                         c.ENDSCREEN:     screen.EndScreen(),
                         c.SCOREBOARD:   screen.ScoreScreen(),
                         c.HELP_SCREEN:  screen.HelpScreen(),
