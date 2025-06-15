@@ -13,6 +13,7 @@ class Level(tool.State):
         self._logged_reset= False
         self._logged_first_wave = False
         self.start_time =0
+        self.total_time =0
     def startup(self, current_time, persist):
         self.game_info = persist
         self.persist = self.game_info
@@ -1320,6 +1321,7 @@ class Level(tool.State):
             self.saveUserData()
         elif self.checkLose():
             self.next = c.ENDSCREEN
+            self.game_info[c.LEVEL_NUM] = self.current_time-self.start_time #記錄總遊玩時間
             self.done = True
 
 
@@ -1441,3 +1443,15 @@ class Level(tool.State):
                 self.showLevelProgress(surface)
                 if self.current_time - self.show_hugewave_approching_time <= 2000:
                     surface.blit(self.huge_wave_approching_image, self.huge_wave_approching_image_rect)
+
+            # 顯示遊戲進行時間在左下角
+            elapsed_seconds = (self.current_time-self.start_time) // 1000
+            minutes = elapsed_seconds // 60
+            seconds = elapsed_seconds % 60
+            time_str = f"{minutes:02d}:{seconds:02d}"
+            font = pg.font.Font(c.FONT_PATH, 20)
+            time_surf = font.render(f"{time_str}", True, c.RED)
+            time_rect = time_surf.get_rect()
+            time_rect.x = 50
+            time_rect.y = surface.get_height() - time_rect.height - 3
+            surface.blit(time_surf, time_rect)
