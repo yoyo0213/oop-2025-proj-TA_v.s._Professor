@@ -162,7 +162,7 @@ class EndScreen(tool.State):
                             self.input_name += event.unicode
             
             # 顯示已輸入的名字
-            name_surf = font.render(self.input_name, True, c.BLACK)
+            name_surf = font.render(self.input_name, True, c.WHITE)
             surface.blit(name_surf, (225, 290))
 
         # successfully saved message
