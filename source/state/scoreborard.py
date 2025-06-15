@@ -22,7 +22,7 @@ class Scoreboard:
     def add_score(self, name, score):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
         self.scores.append({"name": name,"survival time": score  ,"time": timestamp})
-        self.scores = sorted(self.scores, key=lambda x: x["score"], reverse=True)[:MAX_ENTRIES]
+        self.scores = sorted(self.scores, key=lambda x: x["survival time"], reverse=True)[:MAX_ENTRIES]
         self.save_scores()
 
     def get_top_scores(self):

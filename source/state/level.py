@@ -1270,7 +1270,7 @@ class Level(tool.State):
                     self.checkPlant(plant, i)
                 if plant.health <= 0:
                     self.killPlant(plant)
-
+    """
     def checkVictory(self):
         if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
             return False
@@ -1286,7 +1286,7 @@ class Level(tool.State):
             for i in range(self.map_y_len):
                 if len(self.zombie_groups[i]) > 0:
                     return False
-        return True
+        return True"""
 
     def checkLose(self):
         for i in range(self.map_y_len):
@@ -1298,28 +1298,8 @@ class Level(tool.State):
         return False
 
     def checkGameState(self):
-        if self.checkVictory():
-            if self.game_info[c.GAME_MODE] == c.MODE_ADVENTURE:
-                self.game_info[c.LEVEL_NUM] += 1
-                if self.game_info[c.LEVEL_NUM] >= map.TOTAL_LEVEL:
-                    self.game_info[c.LEVEL_COMPLETIONS] += 1
-                    self.game_info[c.LEVEL_NUM] = 1
-                    self.next = c.AWARD_SCREEN
-                else:
-                    self.next = c.GAME_VICTORY
-            elif self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
-                self.game_info[c.LITTLEGAME_NUM] += 1
-                if self.game_info[c.LITTLEGAME_NUM] >= map.TOTAL_LITTLE_GAME:
-                    self.game_info[c.LITTLEGAME_COMPLETIONS] += 1
-                    self.game_info[c.LITTLEGAME_NUM] = 1
-                    self.next = c.AWARD_SCREEN
-
-                else:
-                    self.next = c.GAME_VICTORY
-                    
-            self.done = True
-            self.saveUserData()
-        elif self.checkLose():
+        
+        if self.checkLose():
             self.next = c.ENDSCREEN
             self.game_info[c.LEVEL_NUM] = self.current_time-self.start_time #記錄總遊玩時間
             self.done = True

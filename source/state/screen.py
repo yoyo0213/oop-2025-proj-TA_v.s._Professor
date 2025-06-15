@@ -192,7 +192,7 @@ class EndScreen(tool.State):
 
         # 顯示儲存成功訊息
         if self.saved:
-            saved_surf = small_font.render("已儲存！按任意鍵查看排行榜", True, (255, 255, 255))
+            saved_surf = small_font.render("Saved. Press to continue", True, (255, 255, 255))
             surface.blit(saved_surf, (220, 350))
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -209,7 +209,7 @@ class ScoreScreen(tool.State):
         self.game_info = persist
         self.setupImage()
         pg.display.set_caption("pypvz: 排行榜")
-        # 載入排行榜資料
+        # load the scoreboard
         self.scoreboard = sb.Scoreboard()
 
     def setupImage(self):
@@ -219,6 +219,7 @@ class ScoreScreen(tool.State):
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
+        # clear all data button
 
         # go back to main menu 
         button_rect = (0, 0, 111, 26)
@@ -232,7 +233,8 @@ class ScoreScreen(tool.State):
         main_menu_text_rect.x = 29
         self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
         self.image.blit(self.main_menu_button_image, self.main_menu_button_image_rect)
-
+    def clear_scores(self):
+        self.scoreboard.clear_scores()
     def update(self, surface, current_time, mouse_pos, mouse_click):
         surface.fill(c.BLACK)
         surface.blit(self.image, self.rect)
@@ -242,13 +244,16 @@ class ScoreScreen(tool.State):
         scores = self.scoreboard.get_top_scores()
 
         for i, entry in enumerate(scores):
-            text = f"{i+1}. {entry['name']} - {entry['score']} 分 - {entry['time']}"
+            text = f"{i+1}. {entry['name']} - {entry['survival time']} 分 - {entry['time']}"
             text_surface = font.render(text, True, c.WHITE)
             surface.blit(text_surface, (100, 120 + i * 30))
-
         # 檢查點擊主選單
         if mouse_pos:
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 if mouse_click:
                     self.next = c.MAIN_MENU
                     self.done = True
+            elif self.inArea(self.clear_button_rect, *mouse_pos):
+                if mouse_click:
+                    self.clear_scores()
+
