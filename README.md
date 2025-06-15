@@ -20,6 +20,11 @@ We’ve customized it with the following enhancements:
     A local leaderboard records and ranks player performance based on two metrics:
     Total survival time and total kill points of zombies eliminated (different zombies gains different kill points).
 
+To run the game, use the following command:
+```bash
+python main.py
+```
+
 
 
 
