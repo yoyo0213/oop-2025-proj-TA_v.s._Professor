@@ -42,34 +42,9 @@ class Level(tool.State):
                 pg.display.set_caption(f"pypvz: 玩玩小游戏 {self.map_data[c.GAME_TITLE]}")
             else:
                 self.game_info[c.LITTLEGAME_NUM] = 1
-                self.saveUserData()
                 self.map_data = map.LITTLE_GAME_MAP_DATA[self.game_info[c.LITTLEGAME_NUM]]
-                pg.display.set_caption(f"pypvz: 冒险模式 {self.map_data[c.GAME_TITLE]}")
-                logger.warning("关卡数设定错误！进入默认的第一关！\n")
-        # 是否有铲子的信息：无铲子时为0，有铲子时为1，故直接赋值即可
         self.has_shovel = self.map_data[c.SHOVEL]
 
-        # 同时指定音乐
-        # 缺省音乐为进入的音乐，方便发现错误
-        self.bgm = "intro.opus"
-        if c.CHOOSEBAR_TYPE in self.map_data:  # 指定了choosebar_type的传送带关
-            if self.map_data[c.CHOOSEBAR_TYPE] == c.CHOOSEBAR_BOWLING:   # 坚果保龄球
-                self.bgm = "bowling.opus"
-            elif self.map_data[c.CHOOSEBAR_TYPE] == c.CHOOSEBAR_MOVE:  # 传送带
-                self.bgm = "battle.opus"
-        else:   # 一般选卡关，非传送带
-            # 白天类
-            if self.map_data[c.BACKGROUND_TYPE] in c.BACKGROUND_DAY_LIKE_BACKGROUNDS:
-                self.bgm = "dayLevel.opus"
-            # 夜晚
-            elif self.map_data[c.BACKGROUND_TYPE] == c.BACKGROUND_NIGHT:
-                self.bgm = "nightLevel.opus"
-            # 泳池
-            elif self.map_data[c.BACKGROUND_TYPE] == c.BACKGROUND_POOL:
-                self.bgm = "poolLevel.opus"
-            # 浓雾
-            elif self.map_data[c.BACKGROUND_TYPE] == c.BACKGROUND_FOG:
-                self.bgm = "fogLevel.opus"
 
     def setupBackground(self):
         img_index = self.map_data[c.BACKGROUND_TYPE]
@@ -432,7 +407,7 @@ class Level(tool.State):
         self.return_button_rect.y = 440
         font = pg.font.Font(c.FONT_PATH, 40)
         font.bold = True
-        text = font.render("返回游戏", True, c.YELLOWGREEN)
+        text = font.render("resume", True, c.YELLOWGREEN)
         text_rect = text.get_rect()
         text_rect.x = 105
         text_rect.y = 18
@@ -469,8 +444,7 @@ class Level(tool.State):
             # 重新开始键
             elif self.inArea(self.restart_button_rect, *mouse_pos):
                 self.done = True
-                self.next = c.LEVEL
-                # 播放点击音效
+                self.next = c.PLAY
                 
             # 主菜单键
             elif self.inArea(self.mainMenu_button_rect, *mouse_pos):
@@ -1262,7 +1236,7 @@ class Level(tool.State):
                 target_plant.setAttack()
             elif (target_plant.state == c.ATTACK and (not can_attack)):
                 target_plant.setIdle()
-
+    
     def checkPlants(self):
         for i in range(self.map_y_len):
             for plant in self.plant_groups[i]:
@@ -1270,24 +1244,6 @@ class Level(tool.State):
                     self.checkPlant(plant, i)
                 if plant.health <= 0:
                     self.killPlant(plant)
-    """
-    def checkVictory(self):
-        if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
-            return False
-        if self.map_data[c.SPAWN_ZOMBIES] == c.SPAWN_ZOMBIES_LIST:
-            if len(self.zombie_list) > 0:
-                return False
-            for i in range(self.map_y_len):
-                if len(self.zombie_groups[i]) > 0:
-                    return False
-        else:
-            if self.wave_num < self.map_data[c.NUM_FLAGS] * 10:
-                return False
-            for i in range(self.map_y_len):
-                if len(self.zombie_groups[i]) > 0:
-                    return False
-        return True"""
-
     def checkLose(self):
         for i in range(self.map_y_len):
             for zombie in self.zombie_groups[i]:

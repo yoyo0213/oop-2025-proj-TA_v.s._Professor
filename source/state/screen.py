@@ -147,15 +147,11 @@ class EndScreen(tool.State):
         small_font = pg.font.Font(c.FONT_PATH, 24)
         self.setupImage(surface)
 
-        # 顯示已輸入的名字
-        name_surf = font.render(self.input_name, True, (0, 255, 0))
-        surface.blit(name_surf, (220, 290))
-
         if self.active and not self.saved:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
-                        # 儲存到排行榜
+                        # save to json
                         self.scoreboard.add_score(self.input_name, self.total_time)
                         self.saved = True
                         self.active = False
@@ -164,8 +160,12 @@ class EndScreen(tool.State):
                     else:
                         if len(self.input_name) < 10 and event.unicode.isprintable():
                             self.input_name += event.unicode
+            
+            # 顯示已輸入的名字
+            name_surf = font.render(self.input_name, True, c.WHITE)
+            surface.blit(name_surf, (225, 290))
 
-        # 顯示儲存成功訊息
+        # successfully saved message
         if self.saved:
             saved_surf = small_font.render("Saved. Press to continue", True, (255, 255, 255))
             surface.blit(saved_surf, (220, 350))
@@ -231,10 +231,10 @@ class ScoreScreen(tool.State):
         scores = self.scoreboard.get_top_scores()
 
         for i, entry in enumerate(scores):
-            text = f"{i+1}. {entry['name']} - {entry['survival time']} 分 - {entry['time']}"
+            text = f"{i+1}. {entry['name']} - {entry['survival time']} 秒 - {entry['time']}"
             text_surface = font.render(text, True, c.WHITE)
             surface.blit(text_surface, (100, 120 + i * 30))
-        # 檢查點擊主選單
+        # click
         if mouse_pos:
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 if mouse_click:

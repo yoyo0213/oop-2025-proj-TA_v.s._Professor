@@ -399,7 +399,6 @@ class MoveCard():
         return False
 
     def createShowImage(self):
-        # 新增卡片时显示图片
         if self.rect.w < self.orig_rect.w: #create a part card image
             image = pg.Surface([self.rect.w, self.rect.h])
             if self.clicked:

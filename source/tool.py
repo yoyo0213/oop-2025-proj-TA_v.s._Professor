@@ -34,18 +34,7 @@ class State():
             return True
         else:
             return False
-
-    # tools: save user data -> abando
-    """
-    def saveUserData(self):
-        with open(c.USERDATA_PATH, "w", encoding="utf-8") as f:
-            userdata = {}
-            for i in self.game_info:
-                if i in c.INIT_USERDATA:
-                    userdata[i] = self.game_info[i]
-            data_to_save = json.dumps(userdata, sort_keys=True, indent=4)
-            f.write(data_to_save)
-"""
+   
 # main control 
 class Control():
     def __init__(self):
@@ -59,48 +48,12 @@ class Control():
         self.state_dict = {}
         self.state_name = None
         self.state = None
-        """ upload user data -> abandon this part
-        try:
-            # 存在存档即导入
-            # 先自动修复读写权限(Python权限规则和Unix不一样，420表示unix的644，Windows自动忽略不支持项)
-            os.chmod(c.USERDATA_PATH, 420)
-            with open(c.USERDATA_PATH, encoding="utf-8") as f:
-                userdata = json.load(f)
-        except FileNotFoundError:
-            self.setupUserData()
-        except json.JSONDecodeError:
-            logger.warning("用户存档解码错误！程序将新建初始存档！\n")
-            self.setupUserData()
-        else:   # 没有引发异常才执行
-            self.game_info = {}
-            # 导入数据，保证了可运行性，但是放弃了数据向后兼容性，即假如某些变量在以后改名，在导入时可能会被重置
-            need_to_rewrite = False
-            for key in c.INIT_USERDATA:
-                if key in userdata:
-                    self.game_info[key] = userdata[key]
-                else:
-                    self.game_info[key] = c.INIT_USERDATA[key]
-                    need_to_rewrite = True
-            if need_to_rewrite:
-                with open(c.USERDATA_PATH, "w", encoding="utf-8") as f:
-                    savedata = json.dumps(self.game_info, sort_keys=True, indent=4)
-                    f.write(savedata)
-                    """
         # establish game_info
         self.game_info = c.INIT_USERDATA.copy()
         self.game_info[c.CURRENT_TIME] = 0
 
         # setup fps
         self.fps = 50 * self.game_info[c.GAME_RATE]
-    """ user data setup function -- abandoned
-    def setupUserData(self):
-        if not os.path.exists(os.path.dirname(c.USERDATA_PATH)):
-            os.makedirs(os.path.dirname(c.USERDATA_PATH))
-        with open(c.USERDATA_PATH, "w", encoding="utf-8") as f:
-            savedata = json.dumps(c.INIT_USERDATA, sort_keys=True, indent=4)
-            f.write(savedata)
-        self.game_info = c.INIT_USERDATA.copy() # 内部全是不可变对象，浅拷贝即可
-    """
     def setup_states(self, state_dict:dict, start_state):
         self.state_dict = state_dict
         self.state_name = start_state

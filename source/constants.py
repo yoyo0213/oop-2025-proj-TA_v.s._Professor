@@ -1,14 +1,6 @@
 import os
 import pygame as pg
-"""
-# 用户数据及日志存储路径
-if os.name == "nt": # Windows系统存储路径
-    USERDATA_PATH = os.path.expandvars(os.path.join("%APPDATA%", "pypvz", "userdata.json"))
-    USERLOG_PATH = os.path.expandvars(os.path.join("%APPDATA%", "pypvz", "run.log"))
-else:   # 非Windows系统存储路径
-    USERDATA_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "userdata.json"))
-    USERLOG_PATH = os.path.expanduser(os.path.join("~", ".config", "pypvz", "run.log"))
-"""
+
 # images path
 PATH_IMG_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "graphics")
 # logo path
@@ -666,6 +658,9 @@ INIT_USERDATA = {
                 GAME_RATE:              1,
                 SOUND_VOLUME:           1,
 }
+# scoreboard 
+SCORE_FILE = "scores.json"
+MAX_ENTRIES = 10
 
 # 无穷大常量
 INF = float("inf")  # python传递字符串性能较低，故在这里对inf声明一次，以后仅需调用即可，虽然真正的用处是可以自动补全（
