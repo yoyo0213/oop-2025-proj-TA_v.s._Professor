@@ -14,7 +14,6 @@ class Menu(tool.State):
         self.game_info = persist
         self.setupBackground()
         self.setupOptions()
-        self.setupOptionMenu()
         
     def setupBackground(self):
         frame_rect = (80, 0, 800, 600)
@@ -47,12 +46,12 @@ class Menu(tool.State):
         self.littleGame_highlight_time = 0
 
         # exit
-        exit_frame_rect = (0, 0, 47, 27)
+        exit_frame_rect = (0, 0, 150, 150)
         self.exit_frames = [tool.get_image_alpha(tool.GFX[f"{c.EXIT}_{i}"], *exit_frame_rect, scale=1.1) for i in range(2)]
         self.exit_image = self.exit_frames[0]
         self.exit_rect = self.exit_image.get_rect()
-        self.exit_rect.x = 730
-        self.exit_rect.y = 507
+        self.exit_rect.x = 550
+        self.exit_rect.y = 400
         self.exit_highlight_time = 0
 
         # menu
@@ -86,16 +85,11 @@ class Menu(tool.State):
             self.littleGame_highlight_time = self.current_time
         elif self.inArea(self.exit_rect, x, y):
             self.exit_highlight_time = self.current_time
-        elif self.inArea(self.option_button_rect, x, y):
-            self.option_button_highlight_time = self.current_time
-        elif self.inArea(self.help_rect, x, y):
-            self.help_hilight_time = self.current_time
+
 
         self.adventure_image = self.chooseHilightImage(self.adventure_highlight_time, self.adventure_frames)
         self.exit_image = self.chooseHilightImage(self.exit_highlight_time, self.exit_frames)
-        self.option_button_image = self.chooseHilightImage(self.option_button_highlight_time, self.option_button_frames)
         self.littleGame_image = self.chooseHilightImage(self.littleGame_highlight_time, self.littleGame_frames)
-        self.help_image = self.chooseHilightImage(self.help_hilight_time, self.help_frames)
 
     def chooseHilightImage(self, hilightTime:int, frames):
         if (self.current_time - hilightTime) < 80:
@@ -124,32 +118,7 @@ class Menu(tool.State):
         self.done = True
         self.next = c.HELP_SCREEN
 
-    def setupOptionMenu(self):
-        # 选项菜单框
-        frame_rect = (0, 0, 500, 500)
-        self.big_menu = tool.get_image_alpha(tool.GFX[c.BIG_MENU], *frame_rect, c.BLACK, 1.1)
-        self.big_menu_rect = self.big_menu.get_rect()
-        self.big_menu_rect.x = 150
-        self.big_menu_rect.y = 0
 
-        # 返回按钮，用字体渲染实现，增强灵活性
-        # 建立一个按钮大小的surface对象
-        self.return_button = pg.Surface((376, 96))
-        self.return_button.set_colorkey(c.BLACK)    # 避免多余区域显示成黑色
-        self.return_button_rect = self.return_button.get_rect()
-        self.return_button_rect.x = 220
-        self.return_button_rect.y = 440
-        font = pg.font.Font(c.FONT_PATH, 40)
-        font.bold = True
-        text = font.render("返回游戏", True, c.YELLOWGREEN)
-        text_rect = text.get_rect()
-        text_rect.x = 105
-        text_rect.y = 18
-        self.return_button.blit(text, text_rect)
-
-        frame_rect = (0, 0, 39, 41)
-        font = pg.font.Font(c.FONT_PATH, 35)
-        font.bold = True
 
     def respondOptionButtonClick(self):
         self.option_button_clicked = True
@@ -163,8 +132,6 @@ class Menu(tool.State):
         surface.blit(self.adventure_image, self.adventure_rect)
         surface.blit(self.littleGame_image, self.littleGame_rect)
         surface.blit(self.exit_image, self.exit_rect)
-        surface.blit(self.option_button_image, self.option_button_rect)
-        surface.blit(self.help_image, self.help_rect)
         if self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]:
             pass
         # 点到冒险模式后播放动画
@@ -177,13 +144,6 @@ class Menu(tool.State):
             if (self.current_time - self.adventure_start) > 3200:
                 self.done = True
         # 点到选项按钮后显示菜单
-        elif self.option_button_clicked:
-            surface.blit(self.big_menu, self.big_menu_rect)
-            surface.blit(self.return_button, self.return_button_rect)
-            if mouse_pos:
-                # 返回
-                if self.inArea(self.return_button_rect, *mouse_pos):
-                    self.option_button_clicked = False
         else:
             # 先检查选项高亮预览
             x, y = pg.mouse.get_pos()
@@ -195,8 +155,6 @@ class Menu(tool.State):
                     self.respondAdventureClick()
                 elif self.inArea(self.littleGame_rect, *mouse_pos):
                     self.respondLittleGameClick()
-                elif self.inArea(self.option_button_rect, *mouse_pos):
-                    self.respondOptionButtonClick()
                 elif self.inArea(self.exit_rect, *mouse_pos):
                     self.respondExitClick()
                 elif self.inArea(self.help_rect, *mouse_pos):
