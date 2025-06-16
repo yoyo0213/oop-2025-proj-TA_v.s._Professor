@@ -29,21 +29,21 @@ class Menu(tool.State):
 
     def setupOptions(self):
         # survival
-        frame_rect = (0, 0, 330, 144)
+        frame_rect = (0, 0, 180, 140)
         self.adventure_frames = [tool.get_image_alpha(tool.GFX[f"{c.OPTION_ADVENTURE}_{i}"], *frame_rect) for i in range(2)]
         self.adventure_image = self.adventure_frames[0]
         self.adventure_rect = self.adventure_image.get_rect()
-        self.adventure_rect.x = 400
-        self.adventure_rect.y = 60
+        self.adventure_rect.x = 50
+        self.adventure_rect.y = 400
         self.adventure_highlight_time = 0
 
         # scoreboard
-        littleGame_frame_rect = (0, 7, 317, 135)
+        littleGame_frame_rect = (0, 0, 150, 150)
         self.littleGame_frames = [tool.get_image_alpha(tool.GFX[f"{c.LITTLEGAME_BUTTON}_{i}"], *littleGame_frame_rect) for i in range(2)]
         self.littleGame_image = self.littleGame_frames[0]
         self.littleGame_rect = self.littleGame_image.get_rect()
-        self.littleGame_rect.x = 397
-        self.littleGame_rect.y = 175
+        self.littleGame_rect.x = 300
+        self.littleGame_rect.y = 400
         self.littleGame_highlight_time = 0
 
         # exit
