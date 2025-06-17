@@ -4,22 +4,6 @@ from .. import tool
 from .. import constants as c
 
 
-def getSunValueImage(sun_value):
-    # for pack, must include ttf
-    font = pg.font.Font(c.FONT_PATH, 14)
-    font.bold = True
-    width = 35
-    msg_image = font.render(str(sun_value), True, c.NAVYBLUE, c.LIGHTYELLOW)
-    msg_rect = msg_image.get_rect()
-    msg_w = msg_rect.width
-
-    image = pg.Surface((width, 17))
-    x = width - msg_w
-
-    image.fill(c.LIGHTYELLOW)
-    image.blit(msg_image, (x, 0), (0, 0, msg_rect.w, msg_rect.h))
-    image.set_colorkey(c.BLACK)
-    return image
 
 def getCardPool(data):
     card_pool = {c.PLANT_CARD_INFO[c.PLANT_CARD_INDEX[card_name]]: data[card_name]
@@ -134,102 +118,7 @@ class Card():
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-# 植物栏
-class MenuBar():
-    def __init__(self, card_list, sun_value):
-        self.loadFrame(c.MENUBAR_BACKGROUND)
-        self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
-        
-        self.sun_value = sun_value
-        self.card_offset_x = 26
-        self.setupCards(card_list)
 
-    def loadFrame(self, name):
-        frame = tool.GFX[name]
-        rect = frame.get_rect()
-        frame_rect = (rect.x, rect.y, rect.w, rect.h)
-
-        self.image = tool.get_image(tool.GFX[name], *frame_rect, c.WHITE, 1)
-
-    def update(self, current_time):
-        self.current_time = current_time
-        for card in self.card_list:
-            card.update(self.sun_value, self.current_time)
-
-    def createImage(self, x, y, num):
-        if num == 1:
-            return
-        img = self.image
-        rect = self.image.get_rect()
-        width = rect.w
-        height = rect.h
-        self.image = pg.Surface((width * num, height)).convert()
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        for i in range(num):
-            x = i * width
-            self.image.blit(img, (x,0))
-        self.image.set_colorkey(c.BLACK)
-    
-    def setupCards(self, card_list):
-        self.card_list = []
-        x = self.card_offset_x
-        y = 8
-        for index in card_list:
-            x += c.BAR_CARD_X_INTERNAL
-            self.card_list.append(Card(x, y, index))
-
-    def checkCardClick(self, mouse_pos):
-        result = None
-        for card in self.card_list:
-            if card.checkMouseClick(mouse_pos):
-                if card.canClick(self.sun_value, self.current_time):
-                    result = (c.PLANT_CARD_INFO[card.index][c.PLANT_NAME_INDEX], card)
-                else:
-                    pass
-                break
-        return result
-    
-    def checkMenuBarClick(self, mouse_pos):
-        x, y = mouse_pos
-        if (self.rect.x <= x <= self.rect.right and
-            self.rect.y <= y <= self.rect.bottom):
-            return True
-        return False
-
-    def decreaseSunValue(self, value):
-        self.sun_value -= value
-
-    def increaseSunValue(self, value):
-        self.sun_value += value
-        if self.sun_value > 9990:
-            self.sun_value = 9990
-
-    def setCardFrozenTime(self, plant_name):
-        for card in self.card_list:
-            if c.PLANT_CARD_INFO[card.index][c.PLANT_NAME_INDEX] == plant_name:
-                card.setFrozenTime(self.current_time)
-                break
-
-    def drawSunValue(self):
-        self.value_image = getSunValueImage(self.sun_value)
-        self.value_rect = self.value_image.get_rect()
-        self.value_rect.x = 21
-        self.value_rect.y = self.rect.bottom - 24
-        
-        self.image.blit(self.value_image, self.value_rect)
-
-    def draw(self, surface):
-        self.drawSunValue()
-        surface.blit(self.image, self.rect)
-        for card in self.card_list:
-            card.draw(surface)
-
-
-# 传送带模式的卡片
 class MoveCard():
     def __init__(self, x, y, card_name, plant_name, scale=0.5):
         self.loadFrame(card_name, scale)
@@ -293,7 +182,6 @@ class MoveCard():
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-# 传送带
 class MoveBar():
     def __init__(self, card_pool):
         self.loadFrame(c.MOVEBAR_BACKGROUND)

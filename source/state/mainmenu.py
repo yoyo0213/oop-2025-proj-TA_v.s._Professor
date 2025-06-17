@@ -86,46 +86,12 @@ class Menu(tool.State):
         self.next = c.SCOREBOARD
 
 
-    # 点击到退出按钮，修改转态的done属性
+    # exit button clicked
     def respondExitClick(self):
         self.done = True
         self.next = c.EXIT
 
-    # 帮助按钮点击
-    def respondHelpClick(self):
-        self.done = True
-        self.next = c.HELP_SCREEN
 
-    def setupOptionMenu(self):
-        # 选项菜单框
-        frame_rect = (0, 0, 500, 500)
-        self.big_menu = tool.get_image_alpha(tool.GFX[c.BIG_MENU], *frame_rect, c.BLACK, 1.1)
-        self.big_menu_rect = self.big_menu.get_rect()
-        self.big_menu_rect.x = 150
-        self.big_menu_rect.y = 0
-
-        self.return_button = pg.Surface((376, 96))
-        self.return_button.set_colorkey(c.BLACK)    # 避免多余区域显示成黑色
-        self.return_button_rect = self.return_button.get_rect()
-        self.return_button_rect.x = 220
-        self.return_button_rect.y = 440
-        font = pg.font.Font(c.FONT_PATH, 40)
-        font.bold = True
-        text = font.render("return", True, c.YELLOWGREEN)
-        text_rect = text.get_rect()
-        text_rect.x = 105
-        text_rect.y = 18
-        self.return_button.blit(text, text_rect)
-
-        frame_rect = (0, 0, 39, 41)
-        font = pg.font.Font(c.FONT_PATH, 35)
-        font.bold = True
-
-    def respondOptionButtonClick(self):
-        self.option_button_clicked = True
-
-
-   
     def update(self, surface:pg.Surface, current_time:int, mouse_pos:list, mouse_click):
         self.current_time = self.game_info[c.CURRENT_TIME] = current_time
         
@@ -133,20 +99,15 @@ class Menu(tool.State):
         surface.blit(self.adventure_image, self.adventure_rect)
         surface.blit(self.littleGame_image, self.littleGame_rect)
         surface.blit(self.exit_image, self.exit_rect)
-        if self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]:
-            pass
-        # 点到冒险模式后播放动画
+        
         if self.adventure_clicked:
-            # 乱写一个不用信号标记的循环播放 QwQ
             if ((self.current_time - self.adventure_timer) // 150) % 2:
                 self.adventure_image = self.adventure_frames[1]
             else:
                 self.adventure_image = self.adventure_frames[0]
             if (self.current_time - self.adventure_start) > 3200:
                 self.done = True
-        # 点到选项按钮后显示菜单
         else:
-            # 先检查选项高亮预览
             x, y = pg.mouse.get_pos()
             self.checkHilight(x, y)
             if (self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]):
@@ -158,5 +119,3 @@ class Menu(tool.State):
                     self.respondLittleGameClick()
                 elif self.inArea(self.exit_rect, *mouse_pos):
                     self.respondExitClick()
-                elif self.inArea(self.help_rect, *mouse_pos):
-                    self.respondHelpClick()
