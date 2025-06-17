@@ -660,7 +660,7 @@ INIT_USERDATA = {
 }
 # scoreboard 
 SCORE_FILE = "scores.json"
-MAX_ENTRIES = 10
+MAX_ENTRIES = 5
 
 # 无穷大常量
 INF = float("inf")  # python传递字符串性能较低，故在这里对inf声明一次，以后仅需调用即可，虽然真正的用处是可以自动补全（
