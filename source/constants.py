@@ -9,11 +9,10 @@ ORIGINAL_LOGO = os.path.join(os.path.dirname(os.path.dirname(__file__)), "pypvz-
 FONT_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "DroidSansFallback.ttf")
 
 # title
-ORIGINAL_CAPTION = "TA vs. Zombies"
+ORIGINAL_CAPTION = "Zombies vs. Plants"
 
 # game mode
 GAME_MODE = "mode"
-MODE_ADVENTURE = "adventure"
 MODE_LITTLEGAME = "littleGame"
 MODE_SURVIVAL = "survival"
 MODE_LEADERBOARD = "leaderboard"
@@ -36,16 +35,7 @@ GRID_X_LEN = 9
 GRID_Y_LEN = 5
 GRID_X_SIZE = 80
 GRID_Y_SIZE = 100
-# 带有泳池
-GRID_POOL_X_LEN = GRID_X_LEN
-GRID_POOL_Y_LEN = 6
-GRID_POOL_X_SIZE = GRID_X_SIZE
-GRID_POOL_Y_SIZE = 85
-# 屋顶
-GRID_ROOF_X_LEN = GRID_X_LEN
-GRID_ROOF_Y_LEN = GRID_Y_LEN
-GRID_ROOF_X_SIZE = GRID_X_SIZE
-GRID_ROOF_Y_SIZE = 85
+
 
 # 颜色
 WHITE        = (255, 255, 255)
@@ -61,10 +51,8 @@ YELLOWGREEN  = ( 55, 200,   0)
 LIGHTGRAY    = (107, 108, 145)
 PARCHMENT_YELLOW = (207, 146, 83)
 
-# 退出游戏按钮
+# states
 EXIT = "exit"
-HELP = "help"
-# 游戏界面可选的菜单
 LITTLE_MENU = "littleMenu"
 BIG_MENU = "bigMenu"
 RESTART_BUTTON = "restartButton"
@@ -73,8 +61,7 @@ LITTLEGAME_BUTTON = "littleGameButton"
 OPTION_BUTTON = "optionButton"
 SOUND_VOLUME_BUTTON = "volumeButton"
 UNIVERSAL_BUTTON = "universalButton"
-# 金银向日葵奖杯
-TROPHY_SUNFLOWER = "sunflowerTrophy"
+
 # 小铲子
 SHOVEL = "shovel"
 SHOVEL_BOX = "shovelBox"
@@ -218,8 +205,8 @@ CARD_INDEX = 1
 SUN_INDEX = 2
 FROZEN_TIME_INDEX = 3
 
-# 传送带模式中的刷新间隔和移动速率
-MOVEBAR_CARD_FRESH_TIME = 6000
+# 传送带模式中的刷新间隔和移动速率----------------------------------------------------------------------------
+MOVEBAR_CARD_FRESH_TIME = 5000
 CARD_MOVE_TIME = 60
 
 # 其他显示物
@@ -453,12 +440,6 @@ GARLIC_CRACKED1_HEALTH = GARLIC_HEALTH//3 * 2
 GARLIC_CRACKED2_HEALTH = GARLIC_HEALTH//3
 # 坚果保龄球攻击伤害
 WALLNUT_BOWLING_DAMAGE = 550
-
-# 阳光生成属性
-PRODUCE_SUN_INTERVAL = 4250 # 基准
-FLOWER_SUN_INTERVAL = 24000
-SUN_LIVE_TIME = 10000
-SUN_VALUE = 25
 
 # 僵尸冷冻
 ICE_SLOW_TIME = 10000
