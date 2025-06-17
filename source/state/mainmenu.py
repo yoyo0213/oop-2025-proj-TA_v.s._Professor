@@ -54,23 +54,7 @@ class Menu(tool.State):
         self.exit_rect.y = 400
         self.exit_highlight_time = 0
 
-        # menu
-        option_button_frame_rect = (0, 0, 81, 31)
-        self.option_button_frames = [tool.get_image_alpha(tool.GFX[f"{c.OPTION_BUTTON}_{i}"], *option_button_frame_rect) for i in range(2)]
-        self.option_button_image = self.option_button_frames[0]
-        self.option_button_rect = self.option_button_image.get_rect()
-        self.option_button_rect.x = 560
-        self.option_button_rect.y = 490
-        self.option_button_highlight_time = 0
 
-        # help
-        help_frame_rect = (0, 0, 48, 22)
-        self.help_frames = [tool.get_image_alpha(tool.GFX[f"{c.HELP}_{i}"], *help_frame_rect) for i in range(2)]
-        self.help_image = self.help_frames[0]
-        self.help_rect = self.help_image.get_rect()
-        self.help_rect.x = 653
-        self.help_rect.y = 520
-        self.help_hilight_time = 0
         
         # timer
         self.adventure_start = 0
@@ -118,7 +102,32 @@ class Menu(tool.State):
         self.done = True
         self.next = c.HELP_SCREEN
 
+    def setupOptionMenu(self):
+        # 选项菜单框
+        frame_rect = (0, 0, 500, 500)
+        self.big_menu = tool.get_image_alpha(tool.GFX[c.BIG_MENU], *frame_rect, c.BLACK, 1.1)
+        self.big_menu_rect = self.big_menu.get_rect()
+        self.big_menu_rect.x = 150
+        self.big_menu_rect.y = 0
 
+        # 返回按钮，用字体渲染实现，增强灵活性
+        # 建立一个按钮大小的surface对象
+        self.return_button = pg.Surface((376, 96))
+        self.return_button.set_colorkey(c.BLACK)    # 避免多余区域显示成黑色
+        self.return_button_rect = self.return_button.get_rect()
+        self.return_button_rect.x = 220
+        self.return_button_rect.y = 440
+        font = pg.font.Font(c.FONT_PATH, 40)
+        font.bold = True
+        text = font.render("return", True, c.YELLOWGREEN)
+        text_rect = text.get_rect()
+        text_rect.x = 105
+        text_rect.y = 18
+        self.return_button.blit(text, text_rect)
+
+        frame_rect = (0, 0, 39, 41)
+        font = pg.font.Font(c.FONT_PATH, 35)
+        font.bold = True
 
     def respondOptionButtonClick(self):
         self.option_button_clicked = True
