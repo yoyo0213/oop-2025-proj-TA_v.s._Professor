@@ -129,11 +129,8 @@ class Level(tool.State):
             waves.append(zombie_list)
 
         self.waves = waves
-
-        # 针对有泳池的关卡
-        # 表示尚未生成最后一波中从水里冒出来的僵尸
         self.created_zombie_from_pool = False
-        
+
     def refreshWaves(self, current_time, survival_rounds=0):
         """
         刷新波次；支援無盡生存模式：
