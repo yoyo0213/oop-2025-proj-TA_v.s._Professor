@@ -21,7 +21,7 @@ def main():
                         c.PLAY:        level.Level(),
                         c.ENDSCREEN:     screen.EndScreen(),
                         c.SCOREBOARD:   screen.ScoreScreen(),
-                        c.HELP_SCREEN:  screen.HelpScreen(),
+                        c.HELP_SCREEN:  screen.HelpScreen()
                         }
     game.setup_states(state_dict, c.MAIN_MENU)
     game.run()

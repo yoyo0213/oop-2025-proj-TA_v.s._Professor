@@ -227,13 +227,13 @@ class ScoreScreen(tool.State):
         surface.blit(self.image, self.rect)
 
         # 顯示排行榜資料
-        font = pg.font.Font(c.FONT_PATH, 24)
+        font = pg.font.Font(c.FONT_PATH, 30)
         scores = self.scoreboard.get_top_scores()
 
         for i, entry in enumerate(scores):
-            text = f"{i+1}. {entry['name']} - {entry['survival time']} 秒 - {entry['time']}"
+            text = f"{entry['name']} - {entry['survival time']} 秒"
             text_surface = font.render(text, True, c.WHITE)
-            surface.blit(text_surface, (100, 120 + i * 30))
+            surface.blit(text_surface, (255, 120 + i * 72))
         # click
         if mouse_pos:
             if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
