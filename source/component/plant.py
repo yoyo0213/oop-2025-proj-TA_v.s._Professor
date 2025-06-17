@@ -379,22 +379,6 @@ class Sun(Plant):
         return False
 
 
-class SunFlower(Plant):
-    def __init__(self, x, y, sun_group):
-        Plant.__init__(self, x, y, c.SUNFLOWER, c.PLANT_HEALTH, None)
-        self.sun_timer = 0
-        self.sun_group = sun_group
-        self.attack_check = c.CHECK_ATTACK_NEVER
-
-    def idling(self):
-        if self.sun_timer == 0:
-            self.sun_timer = self.current_time - (c.FLOWER_SUN_INTERVAL - 6000)
-        elif (self.current_time - self.sun_timer) > c.FLOWER_SUN_INTERVAL:
-            self.sun_group.add(
-                Sun(    self.rect.centerx, self.rect.bottom,
-                        self.rect.right, self.rect.bottom + self.rect.h // 2))
-            self.sun_timer = self.current_time
-
 
 class PeaShooter(Plant):
     def __init__(self, x, y, bullet_group):
