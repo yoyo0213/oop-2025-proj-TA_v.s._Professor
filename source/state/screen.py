@@ -64,47 +64,6 @@ class Screen(tool.State):
                 self.next = c.MAIN_MENU
                 self.done = True
 
-class HelpScreen(tool.State):
-    def __init__(self):
-        tool.State.__init__(self)
-
-    def startup(self, current_time, persist):
-        self.start_time = current_time
-        self.persist = persist
-        self.game_info = persist
-        self.setupImage()
-        pg.display.set_caption("pypvz: 帮助")
-
-    def setupImage(self):
-        # 主体
-        frame_rect = (-100, -50, 800, 600)
-        self.image = tool.get_image(tool.GFX[c.HELP_SCREEN_IMAGE], *frame_rect, colorkey=(0, 255, 255))
-        self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
-        
-        # 主菜单按钮
-        frame_rect = (0, 0, 111, 26)
-        self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *frame_rect)
-        self.main_menu_button_image_rect = self.main_menu_button_image.get_rect()
-        self.main_menu_button_image_rect.x = 343
-        self.main_menu_button_image_rect.y = 500
-        ### 主菜单按钮上的文字
-        font = pg.font.Font(c.FONT_PATH, 18)
-        main_menu_text = font.render("Menu", True, c.NAVYBLUE)
-        main_menu_text_rect = main_menu_text.get_rect()
-        main_menu_text_rect.x = 29
-        self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
-        self.image.blit(self.main_menu_button_image, self.main_menu_button_image_rect)
-
-    def update(self, surface, current_time, mouse_pos, mouse_click):
-        surface.fill(c.BLACK)
-        surface.blit(self.image, self.rect)
-        if mouse_pos:
-            # 检查主菜单点击
-            if self.inArea(self.main_menu_button_image_rect, *mouse_pos):
-                self.next = c.MAIN_MENU
-                self.done = True
 class EndScreen(tool.State):
     def __init__(self):
         super().__init__()

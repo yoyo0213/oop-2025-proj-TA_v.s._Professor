@@ -20,8 +20,7 @@ def main():
     state_dict = {  c.MAIN_MENU:    mainmenu.Menu(),
                         c.PLAY:        level.Level(),
                         c.ENDSCREEN:     screen.EndScreen(),
-                        c.SCOREBOARD:   screen.ScoreScreen(),
-                        c.HELP_SCREEN:  screen.HelpScreen()
+                        c.SCOREBOARD:   screen.ScoreScreen()
                         }
     game.setup_states(state_dict, c.MAIN_MENU)
     game.run()
