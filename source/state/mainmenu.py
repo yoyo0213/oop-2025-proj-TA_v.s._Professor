@@ -99,11 +99,8 @@ class Menu(tool.State):
         surface.blit(self.adventure_image, self.adventure_rect)
         surface.blit(self.littleGame_image, self.littleGame_rect)
         surface.blit(self.exit_image, self.exit_rect)
-        if self.game_info[c.LEVEL_COMPLETIONS] or self.game_info[c.LITTLEGAME_COMPLETIONS]:
-            pass
-        # 点到冒险模式后播放动画
+        
         if self.adventure_clicked:
-            # 乱写一个不用信号标记的循环播放 QwQ
             if ((self.current_time - self.adventure_timer) // 150) % 2:
                 self.adventure_image = self.adventure_frames[1]
             else:

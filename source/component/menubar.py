@@ -119,7 +119,6 @@ class Card():
         surface.blit(self.image, self.rect)
 
 
-# 传送带模式的卡片
 class MoveCard():
     def __init__(self, x, y, card_name, plant_name, scale=0.5):
         self.loadFrame(card_name, scale)
@@ -183,7 +182,6 @@ class MoveCard():
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-# 传送带
 class MoveBar():
     def __init__(self, card_pool):
         self.loadFrame(c.MOVEBAR_BACKGROUND)

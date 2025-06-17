@@ -14,7 +14,7 @@ class Screen(tool.State):
         pass
 
     def setupImage(self, name, frame_rect=(0, 0, 800, 600), color_key=c.BLACK):
-        # 背景图本身
+        # background image
         self.image = tool.get_image(tool.GFX[name], *frame_rect, colorkey=color_key)
         self.rect = self.image.get_rect()
         self.rect.x = 0
