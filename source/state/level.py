@@ -133,20 +133,13 @@ class Level(tool.State):
         # 针对有泳池的关卡
         # 表示尚未生成最后一波中从水里冒出来的僵尸
         self.created_zombie_from_pool = False
-
-
-    # 僵尸的刷新机制
+        
     def refreshWaves(self, current_time, survival_rounds=0):
         """
         刷新波次；支援無盡生存模式：
         ─打完 NUM_FLAGS 面旗幟、場上殭屍清空 → 直接重開下一輪，
         並以 self.survival_rounds 逐輪遞增難度。
         """
-        # refreshWaves() 一開頭，生存模式重置 if 之前
-
-    # ------------------------------------------------------------
-    # 【無盡生存】打完最後一面旗幟後 → 進入下一輪
-    # ------------------------------------------------------------
         if (self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME and
             self.wave_num >= self.map_data[c.NUM_FLAGS] * 10):
             if any(len(g) for g in self.zombie_groups):
