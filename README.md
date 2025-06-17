@@ -22,6 +22,7 @@ We’ve customized it with the following enhancements:
 
 To run the game, use the following command:
 ```bash
+pip install -r docs/requirements.txt
 python main.py
 ```
 
