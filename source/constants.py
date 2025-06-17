@@ -9,7 +9,7 @@ ORIGINAL_LOGO = os.path.join(os.path.dirname(os.path.dirname(__file__)), "pypvz-
 FONT_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "DroidSansFallback.ttf")
 
 # title
-ORIGINAL_CAPTION = "TA vs. Zombies"
+ORIGINAL_CAPTION = "Zombies vs. Plants"
 
 # game mode
 GAME_MODE = "mode"
