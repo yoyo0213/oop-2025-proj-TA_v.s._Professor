@@ -189,7 +189,7 @@ class ScoreScreen(tool.State):
 
     def setupImage(self):
         # background
-        frame_rect = (-100, -50, 800, 600)
+        frame_rect = (0, 0, 800, 600)
         self.image = tool.get_image(tool.GFX[c.GAME_LOSE_IMAGE], *frame_rect, colorkey=(0, 255, 255))
         self.rect = self.image.get_rect()
         self.rect.x = 0
@@ -243,4 +243,3 @@ class ScoreScreen(tool.State):
             elif self.inArea(self.clear_button_image_rect, *mouse_pos):
                 if mouse_click:
                     self.clear_scores()
-
