@@ -22,16 +22,13 @@ class Screen(tool.State):
 
         # button size
         frame_rect = (0, 0, 111, 26)
-        ## 主菜单按钮
         self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *frame_rect)
         self.main_menu_button_image_rect = self.main_menu_button_image.get_rect()
         self.main_menu_button_image_rect.x = 620
-        ### 主菜单按钮上的文字
         font = pg.font.Font(c.FONT_PATH, 18)
         main_menu_text = font.render("Menu", True, c.NAVYBLUE)
         main_menu_text_rect = main_menu_text.get_rect()
         main_menu_text_rect.x = 29
-        ## 继续按钮
         self.next_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *frame_rect)
         self.next_button_image_rect = self.next_button_image.get_rect()
         self.next_button_image_rect.x = 70
