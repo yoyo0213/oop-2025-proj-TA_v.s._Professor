@@ -39,7 +39,7 @@ class Level(tool.State):
         if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
             if 0 <= self.game_info[c.LITTLEGAME_NUM] < map.TOTAL_LITTLE_GAME:
                 self.map_data = map.LITTLE_GAME_MAP_DATA[self.game_info[c.LITTLEGAME_NUM]]
-                pg.display.set_caption(f"NNNUts Bowling —survival mode {self.map_data[c.GAME_TITLE]}")
+                pg.display.set_caption(f"{self.map_data[c.GAME_TITLE]}—survival mode ")
             else:
                 self.game_info[c.LITTLEGAME_NUM] = 1
                 self.map_data = map.LITTLE_GAME_MAP_DATA[self.game_info[c.LITTLEGAME_NUM]]
