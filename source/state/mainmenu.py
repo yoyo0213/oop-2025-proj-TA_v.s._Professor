@@ -50,8 +50,6 @@ class Menu(tool.State):
         self.exit_rect.y = 400
         self.exit_highlight_time = 0
 
-
-        
         # timer
         self.adventure_start = 0
         self.adventure_timer = 0
@@ -106,8 +104,6 @@ class Menu(tool.State):
         self.big_menu_rect.x = 150
         self.big_menu_rect.y = 0
 
-        # 返回按钮，用字体渲染实现，增强灵活性
-        # 建立一个按钮大小的surface对象
         self.return_button = pg.Surface((376, 96))
         self.return_button.set_colorkey(c.BLACK)    # 避免多余区域显示成黑色
         self.return_button_rect = self.return_button.get_rect()

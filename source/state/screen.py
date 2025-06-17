@@ -20,7 +20,7 @@ class Screen(tool.State):
         self.rect.x = 0
         self.rect.y = 0
 
-        # 按钮
+        # button size
         frame_rect = (0, 0, 111, 26)
         ## 主菜单按钮
         self.main_menu_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *frame_rect)
@@ -28,24 +28,17 @@ class Screen(tool.State):
         self.main_menu_button_image_rect.x = 620
         ### 主菜单按钮上的文字
         font = pg.font.Font(c.FONT_PATH, 18)
-        main_menu_text = font.render("主菜单", True, c.NAVYBLUE)
+        main_menu_text = font.render("Menu", True, c.NAVYBLUE)
         main_menu_text_rect = main_menu_text.get_rect()
         main_menu_text_rect.x = 29
         ## 继续按钮
         self.next_button_image = tool.get_image_alpha(tool.GFX[c.UNIVERSAL_BUTTON], *frame_rect)
         self.next_button_image_rect = self.next_button_image.get_rect()
         self.next_button_image_rect.x = 70
-        ### 继续按钮上的文字
-        if name == c.GAME_VICTORY_IMAGE:
-            next_text = font.render("下一关", True, c.NAVYBLUE)
-            next_text_rect = next_text.get_rect()
-            next_text_rect.x = 29
-            self.next_button_image_rect.y = self.main_menu_button_image_rect.y = 555
-        else:
-            next_text = font.render("重新开始", True, c.NAVYBLUE)
-            next_text_rect = next_text.get_rect()
-            next_text_rect.x = 21
-            self.next_button_image_rect.y = self.main_menu_button_image_rect.y = 530
+        next_text = font.render("restart", True, c.NAVYBLUE)
+        next_text_rect = next_text.get_rect()
+        next_text_rect.x = 21
+        self.next_button_image_rect.y = self.main_menu_button_image_rect.y = 530
         self.next_button_image.blit(next_text, next_text_rect)
         self.main_menu_button_image.blit(main_menu_text, main_menu_text_rect)
         self.image.blit(self.next_button_image, self.next_button_image_rect)
@@ -55,11 +48,11 @@ class Screen(tool.State):
         surface.fill(c.WHITE)
         surface.blit(self.image, self.rect)
         if mouse_pos:
-            # 点到继续
+            # continue
             if self.inArea(self.next_button_image_rect, *mouse_pos):
                 self.next = c.LEVEL
                 self.done = True
-            # 点到主菜单
+            # mainm menu
             elif self.inArea(self.main_menu_button_image_rect, *mouse_pos):
                 self.next = c.MAIN_MENU
                 self.done = True
