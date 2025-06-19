@@ -35,7 +35,6 @@ class Level(tool.State):
         self.initState()
 
     def loadMap(self):
-        # 小游戏模式
         if self.game_info[c.GAME_MODE] == c.MODE_LITTLEGAME:
             if 0 <= self.game_info[c.LITTLEGAME_NUM] < map.TOTAL_LITTLE_GAME:
                 self.map_data = map.LITTLE_GAME_MAP_DATA[self.game_info[c.LITTLEGAME_NUM]]
